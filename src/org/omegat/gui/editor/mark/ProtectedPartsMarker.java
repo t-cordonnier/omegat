@@ -50,23 +50,14 @@ import org.omegat.util.gui.Styles;
  * @author Aaron Madlon-Kay
  */
 public class ProtectedPartsMarker implements IMarker {
-    protected static final HighlightPainter PAINTER_RTL = new TransparentHighlightPainter(
-            Styles.EditorColor.COLOR_PLACEHOLDER.getColor(), 0.2F);
     protected static final AttributeSet ATTRIBUTES_LTR = Styles
             .createAttributeSet(Styles.EditorColor.COLOR_PLACEHOLDER.getColor(), null, null, null);
 
     @Override
     public List<Mark> getMarksForEntry(SourceTextEntry ste, String sourceText, String translationText, boolean isActive)
             throws Exception {
-        HighlightPainter painter;
-        AttributeSet attrs;
-        if (((EditorController) Core.getEditor()).getOrientation() == Document3.ORIENTATION.ALL_LTR) {
-            attrs = ATTRIBUTES_LTR;
-            painter = null;
-        } else {
-            attrs = null;
-            painter = PAINTER_RTL;
-        }
+        HighlightPainter painter = null;
+        AttributeSet attrs = ATTRIBUTES_LTR;
 
         if (ste.getProtectedParts().length == 0) {
             return null;
