@@ -15,7 +15,7 @@
                2014 Aaron Madlon-Kay
                2015 Didier Briel, Yu Tang
                2017 Didier Briel
-               2019 Thomas Cordonnier
+               2019-2022 Thomas Cordonnier
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -255,6 +255,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectMenu.addSeparator();
         projectMenu.add(projectMedOpenMenuItem = createMenuItem("TF_MENU_FILE_MED_OPEN"));
         projectMenu.add(projectMedCreateMenuItem = createMenuItem("TF_MENU_FILE_MED_CREATE"));
+        projectMenu.addSeparator();
+        projectMenu.add(projectOMTImportMenuItem = createMenuItem("TF_MENU_FILE_OMT_IMPORT"));
+        projectMenu.add(projectOMTExportMenuItem = createMenuItem("TF_MENU_FILE_OMT_EXPORT"));
+        projectMenu.add(projectOMTexportDeleteMenuItem = createMenuItem("TF_MENU_FILE_OMT_EXPORT_DELETE"));
         projectMenu.addSeparator();
         projectMenu.add(projectEditMenuItem = createMenuItem("MW_PROJECTMENU_EDIT"));
         projectMenu.add(viewFileListMenuItem = createMenuItem("TF_MENU_FILE_PROJWIN"));
@@ -683,11 +687,13 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
      *            project open status: true if opened, false if closed
      */
     private void onProjectStatusChanged(final boolean isProjectOpened) {
-        JMenuItem[] itemsToSwitchOff = new JMenuItem[] { projectNewMenuItem, projectTeamNewMenuItem, projectOpenMenuItem, projectMedOpenMenuItem };
+        JMenuItem[] itemsToSwitchOff = new JMenuItem[] { projectNewMenuItem, projectTeamNewMenuItem,
+                projectOpenMenuItem, projectMedOpenMenuItem, projectOMTImportMenuItem };
 
         JMenuItem[] itemsToSwitchOn = new JMenuItem[] { projectImportMenuItem, projectWikiImportMenuItem,
                 projectReloadMenuItem, projectCloseMenuItem, projectSaveMenuItem, projectEditMenuItem,
-                projectCompileMenuItem, projectSingleCompileMenuItem, projectAccessProjectFilesMenu, projectMedCreateMenuItem,
+                projectCompileMenuItem, projectSingleCompileMenuItem, projectAccessProjectFilesMenu,
+                projectMedCreateMenuItem, projectOMTExportMenuItem, projectOMTexportDeleteMenuItem,
 
                 editMenu, editFindInProjectMenuItem, editReplaceInProjectMenuItem, editInsertSourceMenuItem,
                 editInsertTranslationMenuItem, editTagPainterMenuItem, editOverwriteSourceMenuItem,
@@ -830,6 +836,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectSingleCompileMenuItem;
     JMenuItem projectMedOpenMenuItem;
     JMenuItem projectMedCreateMenuItem;
+    JMenuItem projectOMTImportMenuItem;
+    JMenuItem projectOMTExportMenuItem;
+    JMenuItem projectOMTexportDeleteMenuItem;
     JMenuItem projectEditMenuItem;
     JMenuItem projectExitMenuItem;
     JMenuItem projectRestartMenuItem;

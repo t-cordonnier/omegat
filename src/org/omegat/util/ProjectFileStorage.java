@@ -10,6 +10,7 @@
                2013 Aaron Madlon-Kay, Guido Leenders
                2014 Aaron Madlon-Kay, Alex Buloichik
                2015 Aaron Madlon-Kay
+               2019 Briac Pilpré
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -198,7 +199,10 @@ public final class ProjectFileStorage {
      * Saves project file to disk.
      */
     public static void writeProjectFile(ProjectProperties props) throws Exception {
-        File outFile = new File(props.getProjectRoot(), OConsts.FILE_PROJECT);
+        writeProjectFile(props,new File(props.getProjectRoot(),OConsts.FILE_PROJECT));
+    }
+    
+    public static void writeProjectFile(ProjectProperties props, File outFile) throws Exception {
         String root = outFile.getAbsoluteFile().getParent();
 
         Omegat om = new Omegat();

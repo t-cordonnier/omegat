@@ -156,6 +156,27 @@ public final class MainWindowMenuHandler {
     }
 
     /**
+     * Import OMT package
+     */
+    public void projectOMTImportMenuItemActionPerformed() {
+        ProjectUICommands.projectOMTImport();
+    }
+
+    /**
+     * Export OMT package
+     */
+    public void projectOMTExportMenuItemActionPerformed() {
+        ProjectUICommands.projectOMTExport(false);
+    }
+
+    /**
+     * Export OMT package
+     */
+    public void projectOMTExportDeleteMenuItemMenuItemActionPerformed() {
+        ProjectUICommands.projectOMTExport(true);
+    }
+
+    /**
      * Imports the file/files/folder into project's source files.
      */
     public void projectImportMenuItemActionPerformed() {

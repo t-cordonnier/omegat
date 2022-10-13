@@ -35,11 +35,13 @@
 package org.omegat.gui.main;
 
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -85,6 +87,8 @@ import org.omegat.util.WikiGet;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.OpenProjectFileChooser;
 import org.omegat.util.gui.UIThreadsUtil;
+import org.omegat.util.pack.ManageOMTPackage;
+import org.omegat.util.pack.ChooseOmtProject;
 
 import gen.core.project.RepositoryDefinition;
 import gen.core.project.RepositoryMapping;
@@ -290,6 +294,209 @@ public final class ProjectUICommands {
             protected void done() {
                 try {
                     get();
+                    SwingUtilities.invokeLater(Core.getEditor()::requestFocus);
+                } catch (Exception ex) {
+                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                }
+            }
+        }.execute();
+    }
+
+    public static void projectOMTImport() {
+        UIThreadsUtil.mustBeSwingThread();
+
+        ManageOMTPackage.loadPluginProps();
+
+        if (Core.getProject().isProjectLoaded()) {
+            return;
+        }
+
+        ChooseOmtProject ndm = new ChooseOmtProject(OStrings.getString("OMT_CHOOSER_IMPORT"));
+
+        // ask for OMT file
+        int ndmResult = ndm.showOpenDialog(Core.getMainWindow().getApplicationFrame());
+        if (ndmResult != JFileChooser.APPROVE_OPTION) {
+            // user press 'Cancel' in project creation dialog
+            return;
+        }
+        final File omtFile = ndm.getSelectedFile();
+
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                IMainWindow mainWindow = Core.getMainWindow();
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+                Cursor oldCursor = mainWindow.getCursor();
+                mainWindow.setCursor(hourglassCursor);
+                Core.getMainWindow().showStatusMessageRB("OMT_STATUS_IMPORTING_OMT");
+
+                final File projectDir = ManageOMTPackage.extractFromOmt(omtFile);
+                ProjectUICommands.projectOpen(projectDir);
+
+                Core.getMainWindow().showStatusMessageRB("OMT_STATUS_OMT_IMPORTED");
+                mainWindow.setCursor(oldCursor);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+
+                    if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(ManageOMTPackage.PROPERTY_PROMPT_DELETE_IMPORT, "false"))) {
+                        //@formatter:off
+                        int deletePackage = JOptionPane.showConfirmDialog(
+                                Core.getMainWindow().getApplicationFrame(),
+                                OStrings.getString("OMT_DIALOG_DELETE_PACKAGE"),
+                                OStrings.getString("OMT_DIALOG_DELETE_PACKAGE_TITLE"),
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+                        //@formatter:on
+
+                        if (deletePackage == 0) {
+                            Log.log("Deleting imported package");
+                            if (!omtFile.delete()) {
+                                Log.log(String.format("Could not delete the file %s", omtFile.getAbsolutePath()));
+                            }
+                        } else {
+                            Log.log("Keeping imported package");
+                        }
+                    }
+
+                    get();
+                    SwingUtilities.invokeLater(Core.getEditor()::requestFocus);
+                } catch (Exception ex) {
+                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+                }
+            }
+        }.execute();
+    }
+
+    public static void projectOMTExport(boolean deleteProject) {
+        UIThreadsUtil.mustBeSwingThread();
+
+        ManageOMTPackage.loadPluginProps();
+
+        if (!Core.getProject().isProjectLoaded()) {
+            return;
+        }
+
+        // commit the current entry first
+        Core.getEditor().commitAndLeave();
+
+        ChooseOmtProject ndm = new ChooseOmtProject(OStrings.getString("OMT_CHOOSER_EXPORT"));
+
+        // ask for new OMT file
+        // default name
+        String zipName = Core.getProject().getProjectProperties().getProjectName() + ManageOMTPackage.OMT_EXTENSION;
+
+        // By default, save inside the project
+        File defaultLocation = Core.getProject().getProjectProperties().getProjectRootDir();
+
+        if (deleteProject) {
+            // Since the project will be deleted, no point saving the OMT inside it.
+            defaultLocation = defaultLocation.getParentFile();
+        }
+
+        ndm.setSelectedFile(new File(defaultLocation, zipName));
+        int ndmResult = ndm.showSaveDialog(Core.getMainWindow().getApplicationFrame());
+        if (ndmResult != JFileChooser.APPROVE_OPTION) {
+            // user press 'Cancel' in project creation dialog
+            return;
+        }
+
+        // add .omt extension if there is none
+        final File omtFile = ndm.getSelectedFile().getName().toLowerCase(Locale.ENGLISH)
+                .endsWith(ManageOMTPackage.OMT_EXTENSION)
+                ? ndm.getSelectedFile()
+                : new File(ndm.getSelectedFile().getAbsolutePath() + ManageOMTPackage.OMT_EXTENSION);
+
+        Log.log(String.format("Exporting OMT \"%s\"", omtFile.getAbsolutePath()));
+
+        // Check and ask if the user wants to overwrite an existing package
+        if (omtFile.exists()) {
+            //@formatter:off
+            int overwritePackage = JOptionPane.showConfirmDialog(
+                    Core.getMainWindow().getApplicationFrame(),
+                    OStrings.getString("OMT_DIALOG_OVERWRITE_PACKAGE"),
+                    OStrings.getString("OMT_DIALOG_OVERWRITE_PACKAGE_TITLE"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+          //@formatter:on
+
+            if (overwritePackage == 0) {
+                Log.log("Overwriting existing package");
+            } else {
+                Log.log("Not overwriting existing package");
+                return;
+            }
+        }
+
+        File projectDir = Core.getProject().getProjectProperties().getProjectRootDir();
+
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                IMainWindow mainWindow = Core.getMainWindow();
+                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
+                Cursor oldCursor = mainWindow.getCursor();
+                mainWindow.setCursor(hourglassCursor);
+
+                mainWindow.showStatusMessageRB("MW_STATUS_SAVING");
+                Core.executeExclusively(true, () -> Core.getProject().saveProject(true));
+
+                if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(
+                    ManageOMTPackage.PROPERTY_GENERATE_TARGET, "false"))) {
+                    Core.executeExclusively(true, () -> {
+                        try {
+                            Core.getProject().compileProject(".*");
+                        } catch (Exception ex) {
+                            throw new RuntimeException(ex);
+                        } finally {
+                            mainWindow.setCursor(oldCursor);
+                        }
+                    });
+                }
+
+                mainWindow.showStatusMessageRB("OMT_STATUS_EXPORTING_OMT");
+                ManageOMTPackage.createOmt(omtFile, Core.getProject().getProjectProperties());
+
+                if (deleteProject) {
+                    Core.executeExclusively(true, () -> {
+                        ProjectFactory.closeProject();
+                        Core.setFilterMaster(new FilterMaster(Preferences.getFilters()));
+                        Core.setSegmenter(new Segmenter(Preferences.getSRX()));
+                    });
+                }
+
+                // Display the containing folder on the desktop
+                if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(
+                    ManageOMTPackage.PROPERTY_OPEN_DIR, "false"))) {
+                    Desktop.getDesktop().open(omtFile.getParentFile());
+                }
+
+                mainWindow.showStatusMessageRB("OMT_STATUS_OMT_EXPORTED");
+                mainWindow.setCursor(oldCursor);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+
+                    if (deleteProject) {
+                        Core.getMainWindow().showStatusMessageRB("OMT_STATUS_DELETE_PROJECT");
+                        Log.log("Deleting project directory...");
+                        Path pathToBeDeleted = projectDir.toPath();
+
+                        Files.walk(pathToBeDeleted).sorted(Comparator.reverseOrder()).map(Path::toFile)
+                                .forEach(File::delete);
+
+                        if (Files.exists(pathToBeDeleted)) {
+                            Log.log("Couldn't delete project directory...");
+                        }
+                    }
+
                     SwingUtilities.invokeLater(Core.getEditor()::requestFocus);
                 } catch (Exception ex) {
                     Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
