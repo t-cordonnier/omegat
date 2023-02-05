@@ -205,6 +205,7 @@ public abstract class AbstractXmlFilter extends AbstractFilter {
                     }
                 } else {
                     strWriter = oFactory.createXMLStreamWriter(writer);
+                    strWriter.setNamespaceContext(strReader.getNamespaceContext());
                     while (strReader.hasNext()) {
                         if (strReader.getEventType() == XMLEvent.START_DOCUMENT) {
                             // special case: don't use strWriter because StaX
@@ -339,7 +340,7 @@ public abstract class AbstractXmlFilter extends AbstractFilter {
             }
             for (int i = 0, len = xmlr.getAttributeCount(); i < len; i++) {
                 String attUri = xmlr.getAttributeNamespace(i);
-                if (attUri != null) {
+                if ((attUri != null) && (attUri.length() > 0)) {
                     writer.writeAttribute(attUri, xmlr.getAttributeLocalName(i), xmlr.getAttributeValue(i));
                 } else {
                     writer.writeAttribute(xmlr.getAttributeLocalName(i), xmlr.getAttributeValue(i));

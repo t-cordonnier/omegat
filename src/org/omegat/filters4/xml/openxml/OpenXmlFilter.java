@@ -508,7 +508,7 @@ class OpenXmlFilter extends AbstractXmlFilter {
                 res.append("<" + prefixInt + tcInt + "/>");
                 tagsMap.put("" + prefixInt + tcInt, nList);
             } else {
-                res.append(next); // character data
+                res.append(next.asCharacters().getData()); // character data
             }
         }
     }
