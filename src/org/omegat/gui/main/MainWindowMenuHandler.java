@@ -172,7 +172,7 @@ public final class MainWindowMenuHandler {
     /**
      * Export OMT package
      */
-    public void projectOMTExportDeleteMenuItemMenuItemActionPerformed() {
+    public void projectOMTExportDeleteMenuItemActionPerformed() {
         ProjectUICommands.projectOMTExport(true);
     }
 
