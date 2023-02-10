@@ -66,6 +66,8 @@ import org.omegat.core.segmentation.SRX;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.core.team2.IRemoteRepository2;
 import org.omegat.core.team2.RemoteRepositoryProvider;
+import org.omegat.core.pack.omt.ManageOMTPackage;
+import org.omegat.core.pack.omt.ChooseOmtProject;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.ChooseMedProject;
 import org.omegat.gui.dialogs.FileCollisionDialog;
@@ -87,8 +89,6 @@ import org.omegat.util.WikiGet;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.OpenProjectFileChooser;
 import org.omegat.util.gui.UIThreadsUtil;
-import org.omegat.util.pack.ManageOMTPackage;
-import org.omegat.util.pack.ChooseOmtProject;
 
 import gen.core.project.RepositoryDefinition;
 import gen.core.project.RepositoryMapping;

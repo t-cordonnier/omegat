@@ -19,7 +19,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.util.pack;
+package org.omegat.core.pack.omt;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

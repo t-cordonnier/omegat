@@ -18,7 +18,7 @@
  You should have received a copy of the GNU General Public License
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
-package org.omegat.util.pack;
+package org.omegat.core.pack.omt;
 
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
