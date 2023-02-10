@@ -23,7 +23,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.gui.main;
+package org.omegat.core.pack;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -38,16 +38,18 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.util.FileUtil;
 import org.omegat.util.OConsts;
+import org.omegat.util.OStrings;
 
 /**
  * Class for support some MED-specific operations.
  *
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public final class ProjectMedProcessing {
+public final class ProjectMedProcessing implements IPackageFormat {
 
     private ProjectMedProcessing() {
     }
@@ -136,7 +138,7 @@ public final class ProjectMedProcessing {
         return originMedFile;
     }
 
-    public static void createMed(File medZip, ProjectProperties props) throws Exception {
+    public void createPackage(File medZip, ProjectProperties props) throws Exception {
         if (medZip.getAbsolutePath().startsWith(props.getProjectRoot())) {
             throw new Exception("Med can't be inside project");
         }
@@ -233,5 +235,57 @@ public final class ProjectMedProcessing {
             zip.putNextEntry(new ZipEntry(namePrefix + f));
             FileUtils.copyFile(new File(dir, f), zip);
         }
+    }
+    
+    // ------------------ Plugin / IPackageFormat ----------------
+    
+    /** Name to be displayed in the drop-down list */
+    public String getPackFormatName() {
+        return OStrings.getString("PP_PACK_OPTION_MED");
+    }
+    
+    /** Accepted file name extensions **/
+    public String[] extensions() {
+        return new String[] { "med", "zip" };
+    }
+    
+    public static void loadPlugins() {
+        IPackageFormat.FORMATS.add(new ProjectMedProcessing());
+    }
+    
+    public static void unloadPlugins() {
+        /* empty */
+    }
+    
+    public void init() {
+        /* empty */
+    }  
+    
+    public File defaultExportFile(boolean deleteProject) {
+        String zipName = null;
+        try {
+            File origin = ProjectMedProcessing.getOriginMedFile(Core.getProject().getProjectProperties());
+            if (origin != null) {
+                zipName = origin.getName();
+            }
+        } catch (Exception ignored) {
+        }
+        if (zipName == null) {
+            zipName = Core.getProject().getProjectProperties().getProjectName() + "-MED.zip";
+        }
+        return new File(
+                Core.getProject().getProjectProperties().getProjectRootDir().getParentFile(), zipName);
+    }
+    
+    public boolean generateTargetBeforePackageCreation() {
+        return true;
+    }
+    
+    public boolean openFolderAfterCreation() {
+        return false;
+    }
+    
+    public boolean deleteAfterImport() {
+        return false;
     }
 }

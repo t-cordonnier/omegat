@@ -13,6 +13,7 @@
                2017 Didier Briel
                2021 ISHIKAWA,chiaki
                2022 Hiroshi Miura
+               2022-2023 Thomas Cordonnier
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -66,10 +67,11 @@ import org.omegat.core.segmentation.SRX;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.core.team2.IRemoteRepository2;
 import org.omegat.core.team2.RemoteRepositoryProvider;
+import org.omegat.core.pack.IPackageFormat;
+import org.omegat.core.pack.ProjectMedProcessing;
 import org.omegat.core.pack.omt.ManageOMTPackage;
-import org.omegat.core.pack.omt.ChooseOmtProject;
 import org.omegat.filters2.master.FilterMaster;
-import org.omegat.gui.dialogs.ChooseMedProject;
+import org.omegat.gui.dialogs.ChoosePackProject;
 import org.omegat.gui.dialogs.FileCollisionDialog;
 import org.omegat.gui.dialogs.NewProjectFileChooser;
 import org.omegat.gui.dialogs.NewTeamProjectController;
@@ -182,7 +184,7 @@ public final class ProjectUICommands {
         }
 
         // ask for MED file
-        ChooseMedProject ndm = new ChooseMedProject();
+        ChoosePackProject ndm = new ChoosePackProject(false);
         int ndmResult = ndm.showOpenDialog(Core.getMainWindow().getApplicationFrame());
         if (ndmResult != OmegaTFileChooser.APPROVE_OPTION) {
             // user press 'Cancel' in project creation dialog
@@ -231,88 +233,19 @@ public final class ProjectUICommands {
         }.execute();
     }
 
-    public static void projectCreateMED() {
+    public static void projectPackImport() {
         UIThreadsUtil.mustBeSwingThread();
-
-        if (!Core.getProject().isProjectLoaded()) {
-            return;
-        }
-
-        // commit the current entry first
-        Core.getEditor().commitAndLeave();
-
-        // ask for new MED file
-        ChooseMedProject ndm = new ChooseMedProject();
-        // default name
-        String zipName = null;
-        try {
-            File origin = ProjectMedProcessing.getOriginMedFile(Core.getProject().getProjectProperties());
-            if (origin != null) {
-                zipName = origin.getName();
-            }
-        } catch (Exception ignored) {
-        }
-        if (zipName == null) {
-            zipName = Core.getProject().getProjectProperties().getProjectName() + "-MED.zip";
-        }
-        ndm.setSelectedFile(new File(
-                Core.getProject().getProjectProperties().getProjectRootDir().getParentFile(), zipName));
-        int ndmResult = ndm.showSaveDialog(Core.getMainWindow().getApplicationFrame());
-        if (ndmResult != OmegaTFileChooser.APPROVE_OPTION) {
-            // user press 'Cancel' in project creation dialog
-            return;
-        }
-        // add .zip extension if there is no
-        final File med = ndm.getSelectedFile().getName().toLowerCase(Locale.ENGLISH).endsWith(".zip")
-                ? ndm.getSelectedFile() : new File(ndm.getSelectedFile().getAbsolutePath() + ".zip");
-
-        new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
-                IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR);
-                Cursor oldCursor = mainWindow.getCursor();
-                mainWindow.setCursor(hourglassCursor);
-
-                mainWindow.showStatusMessageRB("MW_STATUS_SAVING");
-
-                Core.executeExclusively(true, () -> {
-                    Core.getProject().saveProject(true);
-                    try {
-                        Core.getProject().compileProject(".*");
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-
-                ProjectMedProcessing.createMed(med, Core.getProject().getProjectProperties());
-
-                mainWindow.showStatusMessageRB("MW_STATUS_SAVED");
-                mainWindow.setCursor(oldCursor);
-                return null;
-            }
-
-            protected void done() {
-                try {
-                    get();
-                    SwingUtilities.invokeLater(Core.getEditor()::requestFocus);
-                } catch (Exception ex) {
-                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                }
-            }
-        }.execute();
-    }
-
-    public static void projectOMTImport() {
-        UIThreadsUtil.mustBeSwingThread();
-
-        ManageOMTPackage.loadPluginProps();
 
         if (Core.getProject().isProjectLoaded()) {
             return;
         }
+        
+        // At this step we don't know selected format yet so we init everything
+        for (IPackageFormat fmt: IPackageFormat.FORMATS) {
+            fmt.init();
+        }
 
-        ChooseOmtProject ndm = new ChooseOmtProject(OStrings.getString("OMT_CHOOSER_IMPORT"));
+        ChoosePackProject ndm = new ChoosePackProject(false);
 
         // ask for OMT file
         int ndmResult = ndm.showOpenDialog(Core.getMainWindow().getApplicationFrame());
@@ -321,6 +254,7 @@ public final class ProjectUICommands {
             return;
         }
         final File omtFile = ndm.getSelectedFile();
+        final IPackageFormat format = ndm.selectedFormat();
 
         new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
@@ -341,8 +275,7 @@ public final class ProjectUICommands {
             @Override
             protected void done() {
                 try {
-
-                    if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(ManageOMTPackage.PROPERTY_PROMPT_DELETE_IMPORT, "false"))) {
+                    if (format.deleteAfterImport()) {
                         //@formatter:off
                         int deletePackage = JOptionPane.showConfirmDialog(
                                 Core.getMainWindow().getApplicationFrame(),
@@ -372,10 +305,13 @@ public final class ProjectUICommands {
         }.execute();
     }
 
-    public static void projectOMTExport(boolean deleteProject) {
+    public static void projectPackExport(boolean deleteProject) {
         UIThreadsUtil.mustBeSwingThread();
 
-        ManageOMTPackage.loadPluginProps();
+        // At this step we don't know selected format yet so we init everything
+        for (IPackageFormat fmt: IPackageFormat.FORMATS) {
+            fmt.init();
+        }
 
         if (!Core.getProject().isProjectLoaded()) {
             return;
@@ -384,21 +320,8 @@ public final class ProjectUICommands {
         // commit the current entry first
         Core.getEditor().commitAndLeave();
 
-        ChooseOmtProject ndm = new ChooseOmtProject(OStrings.getString("OMT_CHOOSER_EXPORT"));
-
-        // ask for new OMT file
-        // default name
-        String zipName = Core.getProject().getProjectProperties().getProjectName() + ManageOMTPackage.OMT_EXTENSION;
-
-        // By default, save inside the project
-        File defaultLocation = Core.getProject().getProjectProperties().getProjectRootDir();
-
-        if (deleteProject) {
-            // Since the project will be deleted, no point saving the OMT inside it.
-            defaultLocation = defaultLocation.getParentFile();
-        }
-
-        ndm.setSelectedFile(new File(defaultLocation, zipName));
+        ChoosePackProject ndm = new ChoosePackProject(deleteProject);
+        ndm.setSelectedFile(IPackageFormat.FORMATS.iterator().next().defaultExportFile(deleteProject));
         int ndmResult = ndm.showSaveDialog(Core.getMainWindow().getApplicationFrame());
         if (ndmResult != JFileChooser.APPROVE_OPTION) {
             // user press 'Cancel' in project creation dialog
@@ -406,12 +329,17 @@ public final class ProjectUICommands {
         }
 
         // add .omt extension if there is none
-        final File omtFile = ndm.getSelectedFile().getName().toLowerCase(Locale.ENGLISH)
-                .endsWith(ManageOMTPackage.OMT_EXTENSION)
-                ? ndm.getSelectedFile()
-                : new File(ndm.getSelectedFile().getAbsolutePath() + ManageOMTPackage.OMT_EXTENSION);
+        final IPackageFormat format = ndm.selectedFormat();
+        boolean foundExtension = false;
+        for (String ext: format.extensions()) {
+            if (ndm.getSelectedFile().getName().toLowerCase(Locale.ENGLISH).endsWith(ext)) {
+                foundExtension = true;
+            }
+        }
+        final File omtFile = foundExtension ? ndm.getSelectedFile()
+                : new File(ndm.getSelectedFile().getAbsolutePath() + format.extensions()[0]);
 
-        Log.log(String.format("Exporting OMT \"%s\"", omtFile.getAbsolutePath()));
+        Log.log(String.format("Exporting " + format.getPackFormatName() + " \"%s\"", omtFile.getAbsolutePath()));
 
         // Check and ask if the user wants to overwrite an existing package
         if (omtFile.exists()) {
@@ -444,8 +372,7 @@ public final class ProjectUICommands {
                 mainWindow.showStatusMessageRB("MW_STATUS_SAVING");
                 Core.executeExclusively(true, () -> Core.getProject().saveProject(true));
 
-                if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(
-                    ManageOMTPackage.PROPERTY_GENERATE_TARGET, "false"))) {
+                if (format.generateTargetBeforePackageCreation()) {
                     Core.executeExclusively(true, () -> {
                         try {
                             Core.getProject().compileProject(".*");
@@ -458,7 +385,7 @@ public final class ProjectUICommands {
                 }
 
                 mainWindow.showStatusMessageRB("OMT_STATUS_EXPORTING_OMT");
-                ManageOMTPackage.createOmt(omtFile, Core.getProject().getProjectProperties());
+                format.createPackage(omtFile, Core.getProject().getProjectProperties());
 
                 if (deleteProject) {
                     Core.executeExclusively(true, () -> {
@@ -469,12 +396,11 @@ public final class ProjectUICommands {
                 }
 
                 // Display the containing folder on the desktop
-                if (Boolean.parseBoolean(ManageOMTPackage.pluginProps.getProperty(
-                    ManageOMTPackage.PROPERTY_OPEN_DIR, "false"))) {
+                if (format.openFolderAfterCreation()) {
                     Desktop.getDesktop().open(omtFile.getParentFile());
                 }
 
-                mainWindow.showStatusMessageRB("OMT_STATUS_OMT_EXPORTED");
+                mainWindow.showStatusMessageRB("MW_STATUS_SAVED");
                 mainWindow.setCursor(oldCursor);
                 return null;
             }

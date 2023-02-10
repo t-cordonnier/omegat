@@ -142,38 +142,24 @@ public final class MainWindowMenuHandler {
     }
 
     /**
-     * Open MED project.
-     */
-    public void projectMedOpenMenuItemActionPerformed() {
-        ProjectUICommands.projectOpenMED();
-    }
-
-    /**
-     * Create MED project.
-     */
-    public void projectMedCreateMenuItemActionPerformed() {
-        ProjectUICommands.projectCreateMED();
-    }
-
-    /**
      * Import OMT package
      */
-    public void projectOMTImportMenuItemActionPerformed() {
-        ProjectUICommands.projectOMTImport();
+    public void projectPackImportMenuItemActionPerformed() {
+        ProjectUICommands.projectPackImport();
     }
 
     /**
      * Export OMT package
      */
-    public void projectOMTExportMenuItemActionPerformed() {
-        ProjectUICommands.projectOMTExport(false);
+    public void projectPackExportMenuItemActionPerformed() {
+        ProjectUICommands.projectPackExport(false);
     }
 
     /**
      * Export OMT package
      */
-    public void projectOMTExportDeleteMenuItemActionPerformed() {
-        ProjectUICommands.projectOMTExport(true);
+    public void projectPackExportDeleteMenuItemActionPerformed() {
+        ProjectUICommands.projectPackExport(true);
     }
 
     /**

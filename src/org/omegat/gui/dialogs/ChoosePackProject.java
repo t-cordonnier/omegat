@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2016 Alex Buloichik
+               2022-2023 Thomas Cordonnier
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -31,38 +32,56 @@ import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.omegat.core.pack.IPackageFormat;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 
 @SuppressWarnings("serial")
-public class ChooseMedProject extends JFileChooser {
-    public ChooseMedProject() {
+public class ChoosePackProject extends JFileChooser {
+    private boolean deleteProject;
+
+    public ChoosePackProject(final boolean deleteProject) {
         super(Preferences.getPreference(Preferences.CURRENT_FOLDER));
 
         setMultiSelectionEnabled(false);
         setFileHidingEnabled(true);
         setFileSelectionMode(FILES_ONLY);
-        setDialogTitle(OStrings.getString("PP_MED_OPEN"));
+        setDialogTitle(OStrings.getString("PP_PACK_OPEN"));
         setAcceptAllFileFilterUsed(false);
-        addChoosableFileFilter(new FileFilter() {
-
-            @Override
-            public String getDescription() {
-                return OStrings.getString("PP_MED_OPEN_FILTER");
-            }
-
-            @Override
-            public boolean accept(File f) {
-                return f.isFile() && f.getName().toLowerCase(Locale.ENGLISH).endsWith(".zip");
+        for (IPackageFormat fmt: IPackageFormat.FORMATS) {
+            addChoosableFileFilter(new PackFormatFilter(fmt));
+        }
+        addPropertyChangeListener(ev -> {
+            if (ev.getPropertyName().equals(FILE_FILTER_CHANGED_PROPERTY)) {
+                setSelectedFile(selectedFormat().defaultExportFile(deleteProject));
             }
         });
     }
-
-    @Override
-    public boolean accept(File f) {
-        if (f.isDirectory()) {
-            return true;
+    
+    class PackFormatFilter extends FileFilter {
+        private final IPackageFormat format;
+        
+        public PackFormatFilter(IPackageFormat format) {
+            this.format = format;
         }
-        return f.isFile() && f.getName().toLowerCase(Locale.ENGLISH).endsWith(".zip");
+    
+        public boolean accept(File f) {
+            for (String ext: format.extensions()) {
+                if (f.getName().endsWith(ext)) return true;
+            }
+            return false;
+        }
+        
+        public String getDescription() {
+            return format.getPackFormatName();
+        }
+        
+        public IPackageFormat format() {
+            return format;
+        }
+    }
+    
+    public IPackageFormat selectedFormat() {
+        return ((PackFormatFilter) getFileFilter()).format();
     }
 }

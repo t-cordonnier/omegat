@@ -51,6 +51,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
+import org.omegat.core.pack.IPackageFormat;
 import org.omegat.gui.scripting.ScriptRunner;
 import org.omegat.gui.scripting.IScriptLogger;
 import org.omegat.gui.scripting.ScriptItem;
@@ -64,7 +65,7 @@ import org.omegat.util.StaticUtils;
 
 import org.apache.commons.io.FileUtils;
 
-public class ManageOMTPackage {
+public class ManageOMTPackage implements IPackageFormat {
     public static final String PLUGIN_VERSION = ManageOMTPackage.class.getPackage().getImplementationVersion();
 
     public static final String OMT_EXTENSION = ".omt";
@@ -132,7 +133,7 @@ public class ManageOMTPackage {
         }
     }
 
-    public static void createOmt(final File omtZip, final ProjectProperties props) throws Exception {
+    public void createPackage(final File omtZip, final ProjectProperties props) throws Exception {
         Path path = Paths.get(props.getProjectRootDir().getAbsolutePath());
         if (!Files.isDirectory(path)) {
             throw new IllegalArgumentException("Path \"" + path + "\" must be a directory.");
@@ -371,4 +372,54 @@ public class ManageOMTPackage {
         out.putNextEntry(new ZipEntry(emptyDirFile.replace("\\", "/")));
         out.closeEntry();
     }
+    
+    // ------------------- plugin / IPackageFormat ---------------------
+    
+    /** Name to be displayed in the drop-down list */
+    public String getPackFormatName() {
+        return OStrings.getString("PP_PACK_OPTION_OMT");
+    }
+    
+    /** Accepted file name extensions **/
+    public String[] extensions() {
+        return new String[] { "omt" };
+    }
+    
+    public static void loadPlugins() {
+        IPackageFormat.FORMATS.add(new ManageOMTPackage());
+    }
+    
+    public static void unloadPlugins() {
+        /* empty */
+    }    
+    
+    public void init() {
+        ManageOMTPackage.loadPluginProps();
+    }
+    
+    public File defaultExportFile(boolean deleteProject) {
+        String zipName = Core.getProject().getProjectProperties().getProjectName() + ManageOMTPackage.OMT_EXTENSION;
+
+        // By default, save inside the project
+        File defaultLocation = Core.getProject().getProjectProperties().getProjectRootDir();
+
+        if (deleteProject) {
+            // Since the project will be deleted, no point saving the OMT inside it.
+            defaultLocation = defaultLocation.getParentFile();
+        }
+        
+        return new File(defaultLocation, zipName);
+    }
+    
+    public boolean generateTargetBeforePackageCreation() {
+        return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_GENERATE_TARGET, "false"));
+    }    
+        
+    public boolean openFolderAfterCreation() {
+        return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_OPEN_DIR, "false"));
+    }  
+        
+    public boolean deleteAfterImport() {
+        return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_PROMPT_DELETE_IMPORT, "false"));
+    }  
 }
