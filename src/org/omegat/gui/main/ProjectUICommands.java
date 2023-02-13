@@ -176,63 +176,6 @@ public final class ProjectUICommands {
         }.execute();
     }
 
-    public static void projectOpenMED() {
-        UIThreadsUtil.mustBeSwingThread();
-
-        if (Core.getProject().isProjectLoaded()) {
-            return;
-        }
-
-        // ask for MED file
-        ChoosePackProject ndm = new ChoosePackProject(false);
-        int ndmResult = ndm.showOpenDialog(Core.getMainWindow().getApplicationFrame());
-        if (ndmResult != OmegaTFileChooser.APPROVE_OPTION) {
-            // user press 'Cancel' in project creation dialog
-            return;
-        }
-        final File med = ndm.getSelectedFile();
-
-        // ask for new project dir
-        NewProjectFileChooser ndc = new NewProjectFileChooser();
-        int ndcResult = ndc.showSaveDialog(Core.getMainWindow().getApplicationFrame());
-        if (ndcResult != OmegaTFileChooser.APPROVE_OPTION) {
-            // user press 'Cancel' in project creation dialog
-            return;
-        }
-        final File dir = ndc.getSelectedFile();
-        if (!ensureProjectDir(dir)) {
-            return;
-        }
-
-        new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
-
-                final ProjectProperties newProps = new ProjectProperties(dir);
-                ProjectMedProcessing.extractFromMed(med, newProps);
-                // create project
-                try {
-                    ProjectFactory.createProject(newProps);
-                    RecentProjects.add(dir.getAbsolutePath());
-                } catch (Exception ex) {
-                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                }
-
-                return null;
-            }
-
-            protected void done() {
-                try {
-                    get();
-                    SwingUtilities.invokeLater(Core.getEditor()::requestFocus);
-                } catch (Exception ex) {
-                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                }
-            }
-        }.execute();
-    }
-
     public static void projectPackImport() {
         UIThreadsUtil.mustBeSwingThread();
 
@@ -245,7 +188,7 @@ public final class ProjectUICommands {
             fmt.init();
         }
 
-        ChoosePackProject ndm = new ChoosePackProject(false);
+        ChoosePackProject ndm = new ChoosePackProject(false, false);
 
         // ask for OMT file
         int ndmResult = ndm.showOpenDialog(Core.getMainWindow().getApplicationFrame());
@@ -255,6 +198,25 @@ public final class ProjectUICommands {
         }
         final File omtFile = ndm.getSelectedFile();
         final IPackageFormat format = ndm.selectedFormat();
+        
+        File destDir = format.defaultImportDirectory(omtFile);
+        if (format.askForImportDirectory()) {
+            // ask for new project dir
+            NewProjectFileChooser ndc = new NewProjectFileChooser();
+            if (destDir != null) {
+                ndc.setSelectedFile(destDir);
+            }
+            int ndcResult = ndc.showSaveDialog(Core.getMainWindow().getApplicationFrame());
+            if (ndcResult != OmegaTFileChooser.APPROVE_OPTION) {
+                // user press 'Cancel' in project creation dialog
+                return;
+            }
+            destDir = ndc.getSelectedFile();
+            if (!ensureProjectDir(destDir)) {
+                return;
+            }
+        }
+        final File destDirF = destDir;
 
         new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
@@ -264,8 +226,10 @@ public final class ProjectUICommands {
                 mainWindow.setCursor(hourglassCursor);
                 Core.getMainWindow().showStatusMessageRB("OMT_STATUS_IMPORTING_OMT");
 
-                final File projectDir = ManageOMTPackage.extractFromOmt(omtFile);
-                ProjectUICommands.projectOpen(projectDir);
+                final File projectDir = format.extractFromPack(omtFile,destDirF);
+                if (format.openProjectAfterImport()) {
+                    ProjectUICommands.projectOpen(projectDir);
+                }
 
                 Core.getMainWindow().showStatusMessageRB("OMT_STATUS_OMT_IMPORTED");
                 mainWindow.setCursor(oldCursor);
@@ -275,7 +239,7 @@ public final class ProjectUICommands {
             @Override
             protected void done() {
                 try {
-                    if (format.deleteAfterImport()) {
+                    if (format.deletePackageAfterImport()) {
                         //@formatter:off
                         int deletePackage = JOptionPane.showConfirmDialog(
                                 Core.getMainWindow().getApplicationFrame(),
@@ -320,7 +284,7 @@ public final class ProjectUICommands {
         // commit the current entry first
         Core.getEditor().commitAndLeave();
 
-        ChoosePackProject ndm = new ChoosePackProject(deleteProject);
+        ChoosePackProject ndm = new ChoosePackProject(true, deleteProject);
         ndm.setSelectedFile(IPackageFormat.FORMATS.iterator().next().defaultExportFile(deleteProject));
         int ndmResult = ndm.showSaveDialog(Core.getMainWindow().getApplicationFrame());
         if (ndmResult != JFileChooser.APPROVE_OPTION) {

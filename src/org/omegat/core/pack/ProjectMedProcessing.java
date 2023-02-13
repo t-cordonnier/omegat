@@ -39,10 +39,13 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
+import org.omegat.core.data.ProjectFactory;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.util.FileUtil;
+import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
+import org.omegat.util.RecentProjects;
 
 /**
  * Class for support some MED-specific operations.
@@ -57,12 +60,12 @@ public final class ProjectMedProcessing implements IPackageFormat {
     /**
      * It creates project internals from MED zip file.
      */
-    public static void extractFromMed(File medZip, ProjectProperties props) throws Exception {
-        String medName = medZip.getName().replaceAll("\\.zip$", "");
+    public File extractFromPack(File packFile, File destFile) throws Exception {
+        String medName = packFile.getName().replaceAll("\\.zip$", "");
 
         // extract source and target languages
         Properties p = new Properties();
-        try (ZipFile zip = new ZipFile(medZip)) {
+        try (ZipFile zip = new ZipFile(packFile)) {
             ZipEntry e = zip.getEntry(medName + "/dossier/workflow/translation");
             if (e == null) {
                 throw new Exception("Wrong MED zip structure");
@@ -81,11 +84,20 @@ public final class ProjectMedProcessing implements IPackageFormat {
         if (tlang == null) {
             throw new Exception("Bad MED format: tlang not defined");
         }
+        ProjectProperties props = new ProjectProperties(destFile);
         props.setSourceLanguage(slang);
         props.setTargetLanguage(tlang);
+        // create project
+        try {
+            ProjectFactory.createProject(props);
+            RecentProjects.add(destFile.getAbsolutePath());
+        } catch (Exception ex) {
+            Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+            Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
+        }        
 
         // copy source files
-        try (ZipFile zip = new ZipFile(medZip)) {
+        try (ZipFile zip = new ZipFile(packFile)) {
             extractFiles(zip, medName + "/doc/main/" + props.getSourceLanguage().getLanguage() + "/", null,
                     props.getSourceDir().getAsFile());
             extractFiles(zip, medName + "/doc/support/" + props.getSourceLanguage().getLanguage() + "/",
@@ -95,9 +107,10 @@ public final class ProjectMedProcessing implements IPackageFormat {
         }
 
         // copy original zip
-        File outZip = new File(props.getProjectInternalDir(), "med/" + medZip.getName());
+        File outZip = new File(props.getProjectInternalDir(), "med/" + packFile.getName());
         outZip.getParentFile().mkdirs();
-        FileUtils.copyFile(medZip, outZip);
+        FileUtils.copyFile(packFile, outZip);
+        return destFile;
     }
 
     private static void extractFiles(ZipFile zip, String zipPrefix, String zipSuffix, File projectDir)
@@ -138,8 +151,8 @@ public final class ProjectMedProcessing implements IPackageFormat {
         return originMedFile;
     }
 
-    public void createPackage(File medZip, ProjectProperties props) throws Exception {
-        if (medZip.getAbsolutePath().startsWith(props.getProjectRoot())) {
+    public void createPackage(File packFile, ProjectProperties props) throws Exception {
+        if (packFile.getAbsolutePath().startsWith(props.getProjectRoot())) {
             throw new Exception("Med can't be inside project");
         }
         File sourceMedFile = getOriginMedFile(props);
@@ -148,8 +161,8 @@ public final class ProjectMedProcessing implements IPackageFormat {
 
         String slang = props.getSourceLanguage().getLanguage();
         String tlang = props.getTargetLanguage().getLanguage();
-        String medName = medZip.getName().replaceAll("\\.zip$", "");
-        try (ZipOutputStream outZip = new ZipOutputStream(new FileOutputStream(medZip))) {
+        String medName = packFile.getName().replaceAll("\\.zip$", "");
+        try (ZipOutputStream outZip = new ZipOutputStream(new FileOutputStream(packFile))) {
             if (sourceMedFile != null) {
                 String oldMedName = sourceMedFile.getName().replaceAll("\\.zip$", "");
                 String[] skipPrefixes = new String[] { oldMedName + "/doc/main/" + slang + "/",
@@ -285,7 +298,20 @@ public final class ProjectMedProcessing implements IPackageFormat {
         return false;
     }
     
-    public boolean deleteAfterImport() {
+    public boolean deletePackageAfterImport() {
         return false;
     }
+    
+    public boolean openProjectAfterImport() {
+        return false;
+    }
+    
+    public File defaultImportDirectory(File packFile) {
+        return packFile.getParentFile();
+    }
+    
+    public boolean askForImportDirectory() {
+        return true;
+    }
+    
 }

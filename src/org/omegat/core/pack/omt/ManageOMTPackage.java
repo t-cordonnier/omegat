@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import javax.swing.filechooser.FileSystemView;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
@@ -79,6 +80,9 @@ public class ManageOMTPackage implements IPackageFormat {
     public static final String PROPERTY_GENERATE_TARGET = "generate-target-files";
     public static final String PROPERTY_PROMPT_DELETE_IMPORT = "prompt-remove-omt-after-import";
     public static final String PROPERTY_POST_PACKAGE_SCRIPT = "post-package-script";
+    public static final String PROPERTY_ASK_IMPORT_DIR = "ask-import-location";
+    public static final String PROPERTY_OPEN_IMPORT = "open-project-after-import";
+    public static final String PROPERTY_DEFAULT_IMPORT_LOCATION = "default-import-location";
 
     protected static final Logger LOGGER = Logger.getLogger(ManageOMTPackage.class.getName());
 
@@ -220,13 +224,13 @@ public class ManageOMTPackage implements IPackageFormat {
     /**
      * It creates project internals from OMT zip file.
      */
-    public static File extractFromOmt(File omtFile) throws IOException {
-        String omtName = omtFile.getName().replaceAll("\\" + OMT_EXTENSION + "$", "");
+    public File extractFromPack(File packFile, File destFile) throws IOException {
+        String omtName = packFile.getName().replaceAll("\\" + OMT_EXTENSION + "$", "");
 
         // Check if we're inside a project folder
-        File projectDir = new File(omtFile.getParent(), OConsts.FILE_PROJECT);
+        File projectDir = new File(destFile, OConsts.FILE_PROJECT);
 
-        try (ZipFile zip = new ZipFile(omtFile)) {
+        try (ZipFile zip = new ZipFile(packFile)) {
 
             ZipEntry e = zip.getEntry(OConsts.FILE_PROJECT);
             if (e == null) {
@@ -238,10 +242,10 @@ public class ManageOMTPackage implements IPackageFormat {
 
             if (projectDir.exists()) {
                 Log.log(OStrings.getString("OMT_UPDATE_PACKAGE"));
-                projectDir = omtFile.getParentFile();
+                projectDir = packFile.getParentFile();
             } else {
                 Log.log(OStrings.getString("OMT_NEW_PACKAGE"));
-                projectDir = new File(omtFile.getParentFile(), omtName);
+                projectDir = new File(packFile.getParentFile(), omtName);
                 projectDir.mkdirs();
             }
 
@@ -419,7 +423,27 @@ public class ManageOMTPackage implements IPackageFormat {
         return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_OPEN_DIR, "false"));
     }  
         
-    public boolean deleteAfterImport() {
+    public boolean deletePackageAfterImport() {
         return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_PROMPT_DELETE_IMPORT, "false"));
-    }  
+    }    
+    
+    public boolean openProjectAfterImport() {
+        return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_OPEN_IMPORT, "true"));
+    }
+    
+    public File defaultImportDirectory(File packFile) {
+        String prop = pluginProps.getProperty(PROPERTY_DEFAULT_IMPORT_LOCATION, "");
+        if ((prop == null) || (prop.trim().length() == 0)) {
+            return packFile.getParentFile();
+        } else {
+            prop = prop.replace("%HOME%", System.getProperty("user.home"));
+            prop = prop.replace("%DOCUMENTS%", FileSystemView.getFileSystemView().getDefaultDirectory().getPath());
+            return new File(prop);
+        }
+    }
+    
+    public boolean askForImportDirectory() {
+        return Boolean.parseBoolean(pluginProps.getProperty(PROPERTY_ASK_IMPORT_DIR, "false"));
+    }
+    
 }

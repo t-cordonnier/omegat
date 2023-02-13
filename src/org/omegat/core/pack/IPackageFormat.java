@@ -46,7 +46,7 @@ public interface IPackageFormat {
     /** Put here all what is needed before opening the file dialog **/
     void init();
     
-    // ----------------- Creation ---------------------
+    // ----------------- Export ---------------------
     
     /** Default file for exportation (the user can modify through file dialog) **/
     File defaultExportFile(boolean deleteProject);
@@ -60,11 +60,23 @@ public interface IPackageFormat {
     /** Create the package **/
     void createPackage(final File omtZip, final ProjectProperties props) throws Exception;
     
-    // ----------------- Creation ---------------------
+    // ----------------- Import ---------------------
     
     /** Do we delete package after import? **/
-    boolean deleteAfterImport();
+    boolean deletePackageAfterImport();
     
+    /** Do we open package after import? **/
+    boolean openProjectAfterImport();
+    
+    /** Default location for project, depending on package file **/
+    File defaultImportDirectory(File packFile);
+
+    /** Do we ask for import location, or keep default? **/
+    boolean askForImportDirectory();
+    
+    /** Default location for project, depending on package file **/
+    File extractFromPack(File packFile, File destFile) throws Exception;
+
     // -----------------------------------------------------------------
     
     // Static collection where all package formats will register themselves

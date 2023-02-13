@@ -40,7 +40,7 @@ import org.omegat.util.Preferences;
 public class ChoosePackProject extends JFileChooser {
     private boolean deleteProject;
 
-    public ChoosePackProject(final boolean deleteProject) {
+    public ChoosePackProject(final boolean forExport, final boolean deleteProject) {
         super(Preferences.getPreference(Preferences.CURRENT_FOLDER));
 
         setMultiSelectionEnabled(false);
@@ -51,11 +51,13 @@ public class ChoosePackProject extends JFileChooser {
         for (IPackageFormat fmt: IPackageFormat.FORMATS) {
             addChoosableFileFilter(new PackFormatFilter(fmt));
         }
-        addPropertyChangeListener(ev -> {
-            if (ev.getPropertyName().equals(FILE_FILTER_CHANGED_PROPERTY)) {
-                setSelectedFile(selectedFormat().defaultExportFile(deleteProject));
-            }
-        });
+        if (forExport) {
+            addPropertyChangeListener(ev -> {
+                if (ev.getPropertyName().equals(FILE_FILTER_CHANGED_PROPERTY)) {
+                    setSelectedFile(selectedFormat().defaultExportFile(deleteProject));
+                }
+            });
+        }
     }
     
     class PackFormatFilter extends FileFilter {
@@ -66,6 +68,9 @@ public class ChoosePackProject extends JFileChooser {
         }
     
         public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
             for (String ext: format.extensions()) {
                 if (f.getName().endsWith(ext)) return true;
             }
