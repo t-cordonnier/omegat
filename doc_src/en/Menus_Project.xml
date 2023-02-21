@@ -159,18 +159,30 @@
     </varlistentry>
 
     <varlistentry>
-      <term>Open MED Project...</term>
+      <term>Import package...</term>
 
       <listitem>
-        <para>Opens a project package in the MED format defined by the EU Directorate-General for Translation.</para>
+        <para>Creates a new OmegaT project and import contents from an archive.
+        Actually, it supports OMT format (zip-based format specific to OmegaT)
+        and MED (defined by the EU Directorate-General for Translation).</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term>Create MED Projects...</term>
+      <term>Export package...</term>
 
       <listitem>
-        <para>Converts the current project into a MED package.</para>
+        <para>Converts the current project into a package.
+        Actually, it supports the same formats as menu "Import package".</para>
+      </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+      <term>Export package and delete project...</term>
+
+      <listitem>
+        <para>Converts the current project into a package, closes and deletes the project.
+        Actually, it supports the same formats as menu "Import package".</para>
       </listitem>
     </varlistentry>
 
