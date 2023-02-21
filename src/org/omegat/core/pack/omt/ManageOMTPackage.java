@@ -50,6 +50,14 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.pack.IPackageFormat;
@@ -87,6 +95,8 @@ public class ManageOMTPackage implements IPackageFormat {
     protected static final Logger LOGGER = Logger.getLogger(ManageOMTPackage.class.getName());
 
     private static FileWriter fhandler;
+
+    private static boolean cliMode = false;
 
     public static Properties pluginProps = new Properties();
 
@@ -181,6 +191,11 @@ public class ManageOMTPackage implements IPackageFormat {
         String postPackageScript = pluginProps.getProperty(PROPERTY_POST_PACKAGE_SCRIPT);
         if (postPackageScript != null) {
             runScript(new File(Preferences.getPreference(Preferences.SCRIPTS_DIRECTORY), postPackageScript));
+        }
+        
+        if (cliMode) {
+            Log.log(OStrings.getString("OMT_DIALOG_OVERWRITE_PACKAGE_CREATED"));
+            return;
         }
 
         JOptionPane.showMessageDialog(getMainWindow().getApplicationFrame(),
@@ -376,6 +391,112 @@ public class ManageOMTPackage implements IPackageFormat {
         out.putNextEntry(new ZipEntry(emptyDirFile.replace("\\", "/")));
         out.closeEntry();
     }
+    
+    // ------------------- command line -------------------------
+    
+    public static void main(String[] args) throws Exception {
+        File configFile = new File(StaticUtils.getConfigDir(), CONFIG_FILE);
+        String projectDirectoryName = null;
+        String omtFilename = null;
+
+        cliMode = true;
+
+        // Parse the CLI options
+        Options options = new Options();
+        //@formatter:off
+        options.addOption(
+                Option.builder("c")
+                .longOpt("config")
+                .argName("property-file")
+                .hasArg()
+                .desc("use given file for configuration (default: " + configFile + ")")
+                .type(String.class)
+                .build());
+
+        options.addOption(
+                Option.builder("v")
+                .longOpt("verbose")
+                .desc("be extra verbose")
+                .build());
+
+        options.addOption(
+                Option.builder("q")
+                .longOpt("quiet")
+                .desc("be extra quiet")
+                .build());
+
+		options.addOption(
+                Option.builder("h")
+                .longOpt("help")
+                .desc("print this message")
+                .build());
+
+        if (args.length == 0) {
+            printCliHelp(options);
+        }
+
+        CommandLineParser parser = new DefaultParser();
+        try {
+            // parse the command line arguments
+            CommandLine commandLine = parser.parse(options, args);
+
+            if (commandLine.hasOption("config")) {
+                configFile = new File(commandLine.getOptionValue("config"));
+            }
+
+            if (commandLine.hasOption("verbose")) {
+                Log.setLevel(Level.FINE);
+                LOGGER.setLevel(Level.FINE);
+            }
+            if (commandLine.hasOption("quiet")) {
+                Log.setLevel(Level.OFF);
+            }
+            if (commandLine.hasOption("help")) {
+                printCliHelp(options);
+            }
+
+            String[] remainder = commandLine.getArgs();
+            if (remainder == null || remainder.length == 0) {
+                printCliHelp(options);
+            }
+            projectDirectoryName = remainder[0];
+
+            if (remainder.length == 2) {
+                omtFilename = remainder[1];
+            }
+        } catch (ParseException exp) {
+            System.err.println("Invalid command line: " + exp.getMessage());
+            System.exit(3);
+        }
+
+        File projectDir = new File(projectDirectoryName);
+        if (!projectDir.exists() || !projectDir.canRead() || !projectDir.isDirectory()) {
+            System.err.println("The omegat-project-directory must be a valid directory");
+            System.exit(4);
+        }
+
+        File omtFile = null;
+        if (omtFilename != null) {
+            omtFile = new File(omtFilename);
+        } else {
+            omtFile = new File(projectDir.getParentFile(), projectDir.getName() + OMT_EXTENSION);
+        }
+
+        Log.log(OStrings.getString("TF_MENU_FILE_PACK_EXPORT"));
+        loadPluginProps(configFile);
+        Preferences.init();
+        // Correctly load the project properties
+        ProjectProperties props = org.omegat.util.ProjectFileStorage.loadProjectProperties(projectDir);
+        new ManageOMTPackage().createPackage(omtFile, props);
+    }
+
+    private static void printCliHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(150);
+        formatter.printHelp("ManageOMTPackage [options] omegat-project-directory [omt-package-file]", options, false);
+        System.exit(2);
+    }
+    
     
     // ------------------- plugin / IPackageFormat ---------------------
     

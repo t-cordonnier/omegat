@@ -205,6 +205,9 @@ dependencies {
         // JSON parser
         implementation "com.fasterxml.jackson.core:jackson-core:2.12.3"
         implementation "com.fasterxml.jackson.core:jackson-databind:2.12.3"
+        
+        // OMT package command line
+        implementation 'commons-cli:commons-cli:1.4'
     }
 
     // Test dependencies
