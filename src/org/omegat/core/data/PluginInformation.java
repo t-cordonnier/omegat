@@ -228,8 +228,8 @@ public class PluginInformation {
         public static PluginInformation fromManifest(final String className, final Manifest manifest,
                                                      final URL mu, final Status status) {
             Attributes targetAttrs = new Attributes(manifest.getMainAttributes());
-            String packageName = className.substring(0, className.lastIndexOf(".") + 1)
-                    .replaceAll("\\.", "/");
+            String packageName = className == null ? ""
+                    : className.substring(0, className.lastIndexOf(".") + 1).replaceAll("\\.", "/");
             // package section
             String targetPackage;
             int i = 0;
