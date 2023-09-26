@@ -406,8 +406,18 @@ public class ProjectTMX {
 
     public void replaceContent(ProjectTMX tmx) {
         synchronized (this) {
-            defaults = tmx.defaults;
-            alternatives = tmx.alternatives;
+            synchronized (tmx) {
+                for (Map.Entry<String, TMXEntry> me: tmx.defaults.entrySet()) {
+                    if (defaults.get(me.getKey()) == null) {
+                        this.defaults.put(me.getKey(), me.getValue());
+                    }
+                }
+                for (Map.Entry<EntryKey, TMXEntry> me: tmx.alternatives.entrySet()) {
+                    if (alternatives.get(me.getKey()) == null) {
+                        this.alternatives.put(me.getKey(), me.getValue());
+                    }
+                }
+            }
         }
     }
 
