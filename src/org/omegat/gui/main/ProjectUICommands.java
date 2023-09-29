@@ -300,6 +300,7 @@ public final class ProjectUICommands {
         if (Core.getProject().isProjectLoaded()) {
             return;
         }
+        Core.getAutoSave().disable(); // in big projects autosave may occur during load!!!
         new SwingWorker<Void, Void>() {
             File projectRoot;
             IMainWindow mainWindow;
@@ -383,6 +384,7 @@ public final class ProjectUICommands {
                         SwingUtilities.invokeLater(() -> {
                             Core.getEditor().requestFocus();
                             projectOpen(projectRoot);
+                            Core.getAutoSave().enable();
                         });
 
                     }
