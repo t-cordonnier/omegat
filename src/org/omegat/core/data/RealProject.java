@@ -638,6 +638,17 @@ public class RealProject implements IProject {
             boolean commitTargetFiles) throws Exception {
         Log.logInfoRB("LOG_DATAENGINE_COMPILE_START");
         UIThreadsUtil.mustNotBeSwingThread();
+        
+        // Ensure contents of tm/enforce has not been replaced
+        {
+            File tmRoot = new File(config.getTMRoot());
+            for (Map.Entry<String, ExternalTMX> tm: transMemories.entrySet()) {
+                 if (FileUtil.computeRelativePath(tmRoot, new File(tm.getKey()))
+                            .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
+                    appendFromAutoTMX(tm.getValue(), true);
+                }
+            }
+        }
 
         Pattern filePattern = Pattern.compile(sourcePattern);
         String fname;
