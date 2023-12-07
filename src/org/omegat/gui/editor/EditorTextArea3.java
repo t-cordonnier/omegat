@@ -65,6 +65,8 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.ProtectedPart;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.data.TMXEntry;
+import org.omegat.core.events.IEntryEventListener;
 import org.omegat.gui.editor.autocompleter.AutoCompleter;
 import org.omegat.gui.shortcuts.PropertiesShortcuts;
 import org.omegat.util.Java8Compat;
@@ -164,6 +166,7 @@ public class EditorTextArea3 extends JEditorPane {
         });
 
         addMouseListener(mouseListener);
+        CoreEvents.registerEntryEventListener(lockListener);
 
         // Custom caret for overtype mode
         OvertypeCaret c = new OvertypeCaret();
@@ -309,16 +312,25 @@ public class EditorTextArea3 extends JEditorPane {
             Collections.sort(popupConstructors, (o1, o2) -> o1.priority - o2.priority);
         }
     }
-    
-    private boolean isLocked = false;
-    
-    /**
-     * Set editor locked - used for segments which you should not edit
-     * To be called each time you change segment
+        
+    /** 
+     * On new entry, check if we are in a locked segment, in which case we lock the editor
+     * Using this method ensures that isLocked is set here and only here
      **/
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
+    protected final class LockListener implements IEntryEventListener {
+        private boolean isLocked = false;
+        
+        public void onEntryActivated(SourceTextEntry newEntry) {
+            SourceTextEntry entry = controller.getCurrentEntry();
+            TMXEntry tmx = Core.getProject().getTranslationInfo(entry);
+            isLocked =  (tmx.linked == TMXEntry.ExternalLinked.xENFORCED);
+        }
+        
+        public void onNewFile(String activeFileName) {
+        }
+    };
+    private final transient LockListener lockListener = new LockListener();
+    
 
     /**
      * Redefine some keys behavior. We can't use key listeners, because we have
@@ -334,7 +346,7 @@ public class EditorTextArea3 extends JEditorPane {
         } else if (keyEvent == KeyEvent.KEY_TYPED) {
             //key typed
             // Treat the case of enforced translations which should be locked            
-            if (isLocked) {
+            if (lockListener.isLocked) {
                 return;
             }
             super.processKeyEvent(e);
@@ -365,7 +377,7 @@ public class EditorTextArea3 extends JEditorPane {
             if (controller.settings.isUseTabForAdvance()) {
                 controller.nextEntry();
                 processed = true;
-            } else if (isLocked) {
+            } else if (lockListener.isLocked) {
                 // We should not accept any character, including TAB
                 processed = true;
             }
