@@ -860,6 +860,8 @@ public class EditorController implements IEditor {
         builder.createSegmentElement(true, currentTranslation);
 
         Core.getNotes().setNoteText(currentTranslation.note);
+        
+        editor.setLocked(currentTranslation.linked == TMXEntry.ExternalLinked.xENFORCED);
 
         // then add new marks
         markerController.reprocessImmediately(builder);
