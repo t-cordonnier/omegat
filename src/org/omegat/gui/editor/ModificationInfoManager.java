@@ -73,6 +73,7 @@ public final class ModificationInfoManager {
     public static final String VAR_CHANGED_TIME_COUNTRY = "${changedTimeCountry}";
     public static final String VAR_CHANGED_TIME_SHORT = "${changedTimeShort}";
     public static final String VAR_CHANGED_TIME_SHORT_COUNTRY = "${changedTimeShortCountry}";
+    public static final String VAR_CONTEXT = "${context}";
 
     private static final String[] MOD_INFO_VARIABLES = {
         VAR_CREATION_ID, VAR_CREATION_DATE, VAR_CREATION_DATE_COUNTRY,
@@ -82,7 +83,8 @@ public final class ModificationInfoManager {
         VAR_CHANGED_ID, VAR_CHANGED_DATE, VAR_CHANGED_DATE_COUNTRY,
         VAR_CHANGED_DATE_SHORT, VAR_CHANGED_DATE_SHORT_COUNTRY,
         VAR_CHANGED_TIME, VAR_CHANGED_TIME_COUNTRY,
-        VAR_CHANGED_TIME_SHORT, VAR_CHANGED_TIME_SHORT_COUNTRY
+        VAR_CHANGED_TIME_SHORT, VAR_CHANGED_TIME_SHORT_COUNTRY,
+        VAR_CONTEXT
     };
 
     public static List<String> getModInfoVariables() {
@@ -204,6 +206,9 @@ public final class ModificationInfoManager {
                     trans.changeDate == 0 ? "" : TIME_FORMAT_SHORT.format(changeDate));
             localTemplate = localTemplate.replace(VAR_CHANGED_TIME_SHORT_COUNTRY,
                     trans.changeDate == 0 ? "" : TIME_FORMAT_SHORT_COUNTRY.format(changeDate));
+
+            localTemplate = localTemplate.replace(VAR_CONTEXT, trans.defaultTranslation 
+                    ? OStrings.getString("TF_CUR_SEGMENT_DEFAULT") : OStrings.getString("TF_CUR_SEGMENT_ALTERNATIVE"));
 
             return localTemplate;
         }
