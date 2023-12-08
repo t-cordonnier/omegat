@@ -668,6 +668,10 @@ public class SegmentBuilder {
             }
             text = text.replace("0000", replacement);
         }
+        
+        if (transExist) {
+            text = text.replace(">", defaultTranslation ? "🔁 >" : "🔀 >");
+        }
 
         // Add paragraph mark if the segment is at the beginning of one.
         if (ste.isParagraphStart()) {
