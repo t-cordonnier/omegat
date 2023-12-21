@@ -92,7 +92,7 @@ public class AutoTmxTest {
         p.allProjectEntries.add(ste11 = createSTE("11", "Edit"));
         p.allProjectEntries.add(ste12 = createSTE("12", "Edit"));
         p.importHandler = new ImportFromAutoTMX(p, p.allProjectEntries);
-        p.appendFromAutoTMX(autoTMX, false);
+        p.appendFromAutoTMX(autoTMX, false, false);
         checkTranslation(ste10, "Modifier", TMXEntry.ExternalLinked.x100PC);
         checkTranslation(ste11, "Edition", TMXEntry.ExternalLinked.xICE);
         checkTranslation(ste12, "Modifier", TMXEntry.ExternalLinked.xICE);
@@ -127,7 +127,7 @@ public class AutoTmxTest {
         p.allProjectEntries.add(ste = createSTE(null, "Edit"));
         checkTranslation(ste, "foobar", null);
         p.importHandler = new ImportFromAutoTMX(p, p.allProjectEntries);
-        p.appendFromAutoTMX(enforceTMX, true);
+        p.appendFromAutoTMX(enforceTMX, true, false);
         checkTranslation(ste, "bizbaz", TMXEntry.ExternalLinked.xENFORCED);
     }
     
@@ -184,7 +184,7 @@ public class AutoTmxTest {
             }
         }
         p.importHandler = new ImportFromAutoTMX(p, p.allProjectEntries);
-        p.appendFromAutoTMX(enforceTMX, true);
+        p.appendFromAutoTMX(enforceTMX, true, false);
         TMXEntry e = p.getTranslationInfo(entriesMap.get("tu_0_A"));
         assertFalse(e.isTranslated());
         e = p.getTranslationInfo(entriesMap.get("tu_0_B"));

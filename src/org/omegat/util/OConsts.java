@@ -96,6 +96,9 @@ public final class OConsts {
     public static final String DEFAULT_TM = "tm";
     /** Project subfolder for automatically applied translation memories within the tm folder. */
     public static final String AUTO_TM = "auto";
+    /** Project subfolder for automatically applied translation memories within the tm folder,
+        but only if date is more recent */
+    public static final String UPDATE_TM = "update";
     /** Project subfolder for automatically applied translation memories within the tm folder. Existing
         translation are overwritten */
     public static final String AUTO_ENFORCE_TM = "enforce";

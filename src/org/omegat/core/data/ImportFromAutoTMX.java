@@ -66,7 +66,7 @@ public class ImportFromAutoTMX {
      * @param tmx The name of the TMX to process
      * @param isEnforcedTMX If true, existing default translations will be overwritten in all cases
      */
-    void process(ExternalTMX tmx, boolean isEnforcedTMX) {
+    void process(ExternalTMX tmx, boolean isEnforcedTMX, boolean isUpdateTMX) {
 
         for (PrepareTMXEntry e : tmx.getEntries()) { // iterate by all entries in TMX
             List<SourceTextEntry> list = existEntries.get(e.source);
