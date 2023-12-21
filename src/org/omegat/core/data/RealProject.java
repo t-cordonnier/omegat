@@ -1329,10 +1329,13 @@ public class RealProject implements IProject {
                     // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
                     // directory separators into "/".
                     if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {
-                        appendFromAutoTMX(newTMX, false);
+                        appendFromAutoTMX(newTMX, false, false);
                     } else if (FileUtil.computeRelativePath(tmRoot, file)
                             .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
-                        appendFromAutoTMX(newTMX, true);
+                        appendFromAutoTMX(newTMX, true, false);
+                    } else if (FileUtil.computeRelativePath(tmRoot, file)
+                            .startsWith(OConsts.UPDATE_TM + '/')) {
+                        appendFromAutoTMX(newTMX, false, true);
                     }
 
                 } catch (Exception e) {
@@ -1389,9 +1392,9 @@ public class RealProject implements IProject {
     /**
      * Append new translation from auto TMX.
      */
-    void appendFromAutoTMX(ExternalTMX autoTmx, boolean isEnforcedTMX) {
+    void appendFromAutoTMX(ExternalTMX autoTmx, boolean isEnforcedTMX, boolean isUpdateTmx) {
         synchronized (projectTMX) {
-            importHandler.process(autoTmx, isEnforcedTMX);
+            importHandler.process(autoTmx, isEnforcedTMX, isUpdateTmx);
         }
     }
 

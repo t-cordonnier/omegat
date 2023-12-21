@@ -66,7 +66,7 @@ public class ImportFromAutoTMX {
      * @param tmx The name of the TMX to process
      * @param isEnforcedTMX If true, existing default translations will be overwritten in all cases
      */
-    void process(ExternalTMX tmx, boolean isEnforcedTMX) {
+    void process(ExternalTMX tmx, boolean isEnforcedTMX, boolean isUpdateTMX) {
 
         for (PrepareTMXEntry e : tmx.getEntries()) { // iterate by all entries in TMX
             List<SourceTextEntry> list = existEntries.get(e.source);
@@ -106,6 +106,11 @@ public class ImportFromAutoTMX {
                     } else if (!existTranslation.isTranslated()
                             || (!isDefaultTranslation && hasAlternateTranslations)) {
                         // default translation not exist - use from auto tmx
+                        setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                        
+                    } else if (isUpdateTMX &&  Math.max(e.changeDate, e.creationDate) 
+                            > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                        // Update and more recent - use from auto TMX
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                     }
                 } else { // TMXEntry with x-ids
