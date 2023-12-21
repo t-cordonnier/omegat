@@ -83,6 +83,7 @@ public final class ProjectFactory {
      * Close current project.
      */
     public static void closeProject() {
+        CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.CLOSING);
         Core.getAutoSave().disable();
         Core.getProject().closeProject();
         Core.setProject(new NotLoadedProject());
