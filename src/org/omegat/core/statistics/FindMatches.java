@@ -281,6 +281,7 @@ public class FindMatches {
             if (segments.size() > 1) {
                 List<String> fsrc = new ArrayList<String>(segments.size());
                 List<String> ftrans = new ArrayList<String>(segments.size());
+                int maxPenalty = 0;
                 // multiple segments
                 for (short i = 0; i < segments.size(); i++) {
                     String onesrc = segments.get(i);
@@ -292,6 +293,18 @@ public class FindMatches {
                             && segmentMatch.get(0).scores[0].score >= SUBSEGMENT_MATCH_THRESHOLD) {
                         fsrc.add(segmentMatch.get(0).source);
                         ftrans.add(segmentMatch.get(0).translation);
+                        if (segmentMatch.get(0).fuzzyMark) {
+                            if (maxPenalty < PENALTY_FOR_FUZZY) {
+                                maxPenalty = PENALTY_FOR_FUZZY;
+                            }
+                        }
+                        Matcher matcher = SEARCH_FOR_PENALTY.matcher(segmentMatch.get(0).projs[0]);
+                        if (matcher.find()) {
+                            int penalty = Integer.parseInt(matcher.group(1));
+                            if (penalty > maxPenalty) {
+                                maxPenalty = penalty;
+                            }
+                        }
                     } else {
                         fsrc.add("");
                         ftrans.add("");
@@ -301,7 +314,7 @@ public class FindMatches {
                 String foundSrc = Core.getSegmenter().glue(sourceLang, sourceLang, fsrc, spaces, brules);
                 // glue found translations
                 String foundTrans = Core.getSegmenter().glue(sourceLang, targetLang, ftrans, spaces, brules);
-                processEntry(null, foundSrc, foundTrans, NearString.MATCH_SOURCE.TM, false, 0, "", "", 0, "",
+                processEntry(null, foundSrc, foundTrans, NearString.MATCH_SOURCE.TM, false, maxPenalty, "Sub-segment match", "", 0, "",
                         0, null);
             }
         }
