@@ -136,8 +136,13 @@ public class GITCredentialsProvider extends CredentialsProvider {
     private Credentials loadCredentials(URIish uri) {
         String url = uri.toString();
         Credentials credentials = new Credentials();
-        credentials.username = TeamSettings.get(url + "!" + KEY_USERNAME_SUFFIX);
-        credentials.password = TeamUtils.decodePassword(TeamSettings.get(url + "!" + KEY_PASSWORD_SUFFIX));
+        try {
+            credentials.password = TeamUtils.decodePassword(TeamSettings.get(url + "!" + KEY_PASSWORD_SUFFIX));
+            credentials.username = TeamSettings.get(url + "!" + KEY_USERNAME_SUFFIX);
+        } catch (Exception e) {
+            //Core.getMainWindow().displayErrorRB(e, "TEAM_ERROR_READ_CREDENTIALS", null, "TF_ERROR");  // should be blocking, is not
+            credentials.error = OStrings.getString("TEAM_ERROR_READ_CREDENTIALS");
+        }
         return credentials;
     }
 
@@ -309,8 +314,8 @@ public class GITCredentialsProvider extends CredentialsProvider {
     private Credentials askCredentials(URIish uri, Credentials credentials) {
         GITUserPassDialog userPassDialog = new GITUserPassDialog(Core.getMainWindow().getApplicationFrame());
         userPassDialog.setLocationRelativeTo(Core.getMainWindow().getApplicationFrame());
-        userPassDialog.descriptionTextArea.setText(OStrings
-                .getString(credentials.username == null ? "TEAM_USERPASS_FIRST" : "TEAM_USERPASS_WRONG", uri.getHumanishName()));
+        userPassDialog.descriptionTextArea.setText(credentials.error != null ? credentials.error :
+                OStrings.getString(credentials.username == null ? "TEAM_USERPASS_FIRST" : "TEAM_USERPASS_WRONG", uri.getHumanishName()));
         // if username is already available in uri, then we will not be asked for an username, so we cannot
         // change it.
         if (uri.getUser() != null && !"".equals(uri.getUser())) {
@@ -377,5 +382,7 @@ public class GITCredentialsProvider extends CredentialsProvider {
     public static class Credentials {
         public String username = null;
         public String password = null;
+        
+        public String error = null;
     }
 }
