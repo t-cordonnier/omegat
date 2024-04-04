@@ -673,6 +673,17 @@ public class RealProject implements IProject {
         // the repository (BUGS#1176)
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
 
+        if (doPostProcessing) {
+
+            // Kill any processes still not complete
+            flushProcessCache();
+
+            if (Preferences.isPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD)) {
+                doExternalCommand(config.getExternalCommand());
+            }
+            doExternalCommand(Preferences.getPreference(Preferences.EXTERNAL_COMMAND));
+        }
+                
         if (remoteRepositoryProvider != null && config.getTargetDir().isUnderRoot() && commitTargetFiles && isOnlineMode) {
             tmxPrepared = null;
             glossaryPrepared = null;
@@ -715,17 +726,6 @@ public class RealProject implements IProject {
             Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX_SINGULAR");
         } else {
             Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
-        }
-
-        if (doPostProcessing) {
-
-            // Kill any processes still not complete
-            flushProcessCache();
-
-            if (Preferences.isPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD)) {
-                doExternalCommand(config.getExternalCommand());
-            }
-            doExternalCommand(Preferences.getPreference(Preferences.EXTERNAL_COMMAND));
         }
 
         Log.logInfoRB("LOG_DATAENGINE_COMPILE_END");
