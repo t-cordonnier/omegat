@@ -485,10 +485,12 @@ public class RealProject implements IProject {
      * thread shouldn't throw any error.
      */
     public void closeProject() {
-        try {
-            compileProject(".*");
-        } catch (Exception ex) {
+        if (Preferences.isPreference(Preferences.ALWAYS_COMPILE_ON_CLOSE)) {
+            try {
+                compileProject(".*");
+            } catch (Exception ex) {
         
+            }
         }
         loaded = false;
         flushProcessCache();

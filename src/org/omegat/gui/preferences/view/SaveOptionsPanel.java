@@ -74,6 +74,7 @@ public class SaveOptionsPanel extends JPanel {
         variablesList = new javax.swing.JComboBox<>();
         insertButton = new javax.swing.JButton();
         allowProjectCmdCheckBox = new javax.swing.JCheckBox();
+        compileCloseCheckbox = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
@@ -86,7 +87,6 @@ public class SaveOptionsPanel extends JPanel {
         intervalDescriptionTextArea.setLineWrap(true);
         intervalDescriptionTextArea.setText(OStrings.getString("SAVE_DIALOG_DESCRIPTION")); // NOI18N
         intervalDescriptionTextArea.setWrapStyleWord(true);
-        intervalDescriptionTextArea.setDragEnabled(false);
         intervalDescriptionTextArea.setFocusable(false);
         intervalDescriptionTextArea.setOpaque(false);
         jPanel1.add(intervalDescriptionTextArea, java.awt.BorderLayout.NORTH);
@@ -145,7 +145,6 @@ public class SaveOptionsPanel extends JPanel {
         externalCmdDescriptionTextArea.setText(OStrings.getString("EXTERNAL_COMMAND_DESCRIPTION")); // NOI18N
         externalCmdDescriptionTextArea.setWrapStyleWord(true);
         externalCmdDescriptionTextArea.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 1));
-        externalCmdDescriptionTextArea.setDragEnabled(false);
         externalCmdDescriptionTextArea.setOpaque(false);
         jPanel8.add(externalCmdDescriptionTextArea, java.awt.BorderLayout.NORTH);
 
@@ -179,6 +178,9 @@ public class SaveOptionsPanel extends JPanel {
         jPanel2.add(allowProjectCmdCheckBox, java.awt.BorderLayout.SOUTH);
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        org.openide.awt.Mnemonics.setLocalizedText(compileCloseCheckbox, OStrings.getString("TF_COMPILE_ON_CLOSE")); // NOI18N
+        add(compileCloseCheckbox, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
@@ -187,6 +189,7 @@ public class SaveOptionsPanel extends JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox allowProjectCmdCheckBox;
+    javax.swing.JCheckBox compileCloseCheckbox;
     private javax.swing.JTextArea externalCmdDescriptionTextArea;
     private javax.swing.JLabel externalCommandLabel;
     private javax.swing.JScrollPane externalCommandScrollPane;

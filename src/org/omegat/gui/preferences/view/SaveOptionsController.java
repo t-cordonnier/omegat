@@ -81,6 +81,8 @@ public class SaveOptionsController extends BasePreferencesController {
 
         panel.variablesList
                 .setModel(new DefaultComboBoxModel<>(new Vector<>(CommandVarExpansion.getCommandVariables())));
+                
+        panel.compileCloseCheckbox.setSelected(Preferences.isPreference(Preferences.ALWAYS_COMPILE_ON_CLOSE));
     }
 
     @Override
@@ -90,6 +92,8 @@ public class SaveOptionsController extends BasePreferencesController {
 
         panel.externalCommandTextArea.setText("");
         panel.allowProjectCmdCheckBox.setSelected(false);
+        
+        panel.compileCloseCheckbox.setSelected(false);
     }
 
     @Override
@@ -119,5 +123,7 @@ public class SaveOptionsController extends BasePreferencesController {
 
         Preferences.setPreference(Preferences.EXTERNAL_COMMAND, panel.externalCommandTextArea.getText());
         Preferences.setPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD, panel.allowProjectCmdCheckBox.isSelected());
+        
+        Preferences.setPreference(Preferences.ALWAYS_COMPILE_ON_CLOSE, panel.compileCloseCheckbox.isSelected());        
     }
 }

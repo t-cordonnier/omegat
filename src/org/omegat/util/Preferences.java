@@ -171,6 +171,9 @@ public final class Preferences {
     public static final String USE_TAB_TO_ADVANCE = "tab_advance";
     /** Always confirm Quit, even if the project is saved */
     public static final String ALWAYS_CONFIRM_QUIT = "always_confirm_quit";
+    /** Always compile when close project */
+    public static final String ALWAYS_COMPILE_ON_CLOSE = "always_compile_close";
+    
 
     public static final String ALLOW_GOOGLE_TRANSLATE = "allow_google_translate";
     public static final String ALLOW_GOOGLE2_TRANSLATE = "allow_google2_translate";
