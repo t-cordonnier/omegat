@@ -586,7 +586,8 @@ public class RealProject implements IProject {
      * @throws Exception
      */
     public void compileProject(String sourcePattern, boolean doPostProcessing) throws Exception {
-        compileProjectAndCommit(sourcePattern, doPostProcessing, false);
+        compileProjectAndCommit(sourcePattern, doPostProcessing, 
+            Preferences.isPreference(Preferences.ALWAYS_COMMIT_ON_COMPILE));
     }
 
     /**

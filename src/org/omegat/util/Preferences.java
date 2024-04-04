@@ -173,6 +173,9 @@ public final class Preferences {
     public static final String ALWAYS_CONFIRM_QUIT = "always_confirm_quit";
     /** Always compile when close project */
     public static final String ALWAYS_COMPILE_ON_CLOSE = "always_compile_close";
+    /** Always compile when close project */
+    public static final String ALWAYS_COMMIT_ON_COMPILE = "always_commit_compile";
+    
     
 
     public static final String ALLOW_GOOGLE_TRANSLATE = "allow_google_translate";

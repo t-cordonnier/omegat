@@ -74,7 +74,10 @@ public class SaveOptionsPanel extends JPanel {
         variablesList = new javax.swing.JComboBox<>();
         insertButton = new javax.swing.JButton();
         allowProjectCmdCheckBox = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 10), new java.awt.Dimension(0, 10), new java.awt.Dimension(32767, 10));
         compileCloseCheckbox = new javax.swing.JCheckBox();
+        commitCompileCheckbox = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
@@ -179,8 +182,15 @@ public class SaveOptionsPanel extends JPanel {
 
         add(jPanel2, java.awt.BorderLayout.CENTER);
 
+        jPanel3.setLayout(new java.awt.BorderLayout());
+        jPanel3.add(filler1, java.awt.BorderLayout.NORTH);
+
         org.openide.awt.Mnemonics.setLocalizedText(compileCloseCheckbox, OStrings.getString("TF_COMPILE_ON_CLOSE")); // NOI18N
-        add(compileCloseCheckbox, java.awt.BorderLayout.PAGE_END);
+        jPanel3.add(compileCloseCheckbox, java.awt.BorderLayout.WEST);
+        jPanel3.add(commitCompileCheckbox, java.awt.BorderLayout.CENTER);
+        org.openide.awt.Mnemonics.setLocalizedText(commitCompileCheckbox, OStrings.getString("TF_COMMIT_ON_COMPILE")); // NOI18N
+
+        add(jPanel3, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
     private void insertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertButtonActionPerformed
@@ -194,11 +204,14 @@ public class SaveOptionsPanel extends JPanel {
     private javax.swing.JLabel externalCommandLabel;
     private javax.swing.JScrollPane externalCommandScrollPane;
     javax.swing.JTextArea externalCommandTextArea;
+    private javax.swing.Box.Filler filler1;
     javax.swing.JButton insertButton;
     private javax.swing.JTextArea intervalDescriptionTextArea;
+    javax.swing.JCheckBox commitCompileCheckbox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel8;
