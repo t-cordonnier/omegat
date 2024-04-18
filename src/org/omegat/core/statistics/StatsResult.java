@@ -210,7 +210,7 @@ public class StatsResult {
         jsoProject.put("target-language", config.getTargetLanguage());
         jso.put("project", jsoProject);
 
-        jso.put("date", new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'").format(new Date()));
+        //jso.put("date", new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'").format(new Date()));
 
         JSONArray jsaFiles = new JSONArray();
 
