@@ -63,10 +63,12 @@ public final class Help {
     /**
      * URL for the online manual.
      */
-    public static final String ONLINE_HELP_URL = OStrings.IS_BETA
+    public static final String ONLINE_HELP_URL_ORIG = OStrings.IS_BETA
             ? "https://omegat.sourceforge.io/manual-latest/"
             : "https://omegat.sourceforge.io/manual-standard/";
 
+    public static final String ONLINE_HELP_URL_CAPSTAN = "https://capstanlqc.github.io/omegat-guides/";
+            
     public static final String ONLINE_JAVADOC_URL = OStrings.IS_BETA
             ? "https://omegat.sourceforge.io/javadoc-latest/"
             : "https://omegat.sourceforge.io/javadoc-standard/";
@@ -83,10 +85,10 @@ public final class Help {
      */
     public static void showHelp() throws IOException {
         String lang = detectHelpLanguage();
-        URI uri = getHelpFileURI(lang, OConsts.HELP_HOME);
+        URI uri = URI.create(ONLINE_HELP_URL_CAPSTAN); /*getHelpFileURI(lang, OConsts.HELP_HOME);
         if (uri == null) {
             uri = URI.create(ONLINE_HELP_URL);
-        }
+        } */
         DesktopWrapper.browse(uri);
     }
 
