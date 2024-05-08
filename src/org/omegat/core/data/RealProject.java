@@ -706,7 +706,7 @@ public class RealProject implements IProject {
                 ProjectProperties.ProjectPath path = config.new ProjectPath(false);
                 path.setRelativeOrAbsolute(statsTextFilename);
                 remoteRepositoryProvider.copyFilesFromProjectToRepos(path.getUnderRoot(), null);
-                remoteRepositoryProvider.commitFiles(path.getUnderRoot(), "Statistics");
+                //remoteRepositoryProvider.commitFiles(path.getUnderRoot(), "Statistics");
 
                 path = config.new ProjectPath(false);
                 path.setRelativeOrAbsolute(statsTextFilename.replace(".txt",".json"));
