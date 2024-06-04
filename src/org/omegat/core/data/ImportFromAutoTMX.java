@@ -87,7 +87,7 @@ public class ImportFromAutoTMX {
                 }
                 if (!hasICE && !has100PC) { // TMXEntry without x-ids
                     boolean isDefaultTranslation = !isAltTranslation(e);
-                    if (!existTranslation.defaultTranslation && isDefaultTranslation) {
+                    if (! (hasAlternateTranslations && existTranslation.defaultTranslation)) {
                         // Existing translation is alt but the TMX entry is not.
                         continue;
                     }
@@ -98,7 +98,7 @@ public class ImportFromAutoTMX {
                     if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
                             < Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
                         // Candidate is older. Pass, unless TMX entry is alt while project entry is not
-                        if (! (hasAlternateTranslations && existTranslation.defaultTranslation)) {
+                        if (isAltTranslation(e) && existTranslation.defaultTranslation) {
                             continue;
                         }
                     }
@@ -110,9 +110,9 @@ public class ImportFromAutoTMX {
                         // - the existing translation doesn't come from an enforced TM or
                         // - the existing enforced translation was a default translation but this one is not
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xENFORCED);
-                    } else if (!existTranslation.isTranslated()
-                            || (!isDefaultTranslation && hasAlternateTranslations)) {
-                        // default translation not exist - use from auto tmx
+                    } else if ((!existTranslation.isTranslated()) || (existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED)
+                            || ((!isDefaultTranslation && hasAlternateTranslations))) {
+                        // not translated as enforced - use from auto tmx
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                     }
                 } else { // TMXEntry with x-ids
