@@ -95,6 +95,13 @@ public class ImportFromAutoTMX {
                         // TMX entry is an alternative translation that does not match this STE.
                         continue;
                     }
+                    if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
+                            < Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                        // Candidate is older. Pass, unless TMX entry is alt while project entry is not
+                        if (! (hasAlternateTranslations && existTranslation.defaultTranslation)) {
+                            continue;
+                        }
+                    }
                     if (isEnforcedTMX && (!existTranslation.isTranslated()
                             || existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED
                             || (!isDefaultTranslation && existTranslation.defaultTranslation))) {
@@ -106,11 +113,6 @@ public class ImportFromAutoTMX {
                     } else if (!existTranslation.isTranslated()
                             || (!isDefaultTranslation && hasAlternateTranslations)) {
                         // default translation not exist - use from auto tmx
-                        setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                        
-                    } else if (isUpdateTMX &&  Math.max(e.changeDate, e.creationDate) 
-                            > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
-                        // Update and more recent - use from auto TMX
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                     }
                 } else { // TMXEntry with x-ids
