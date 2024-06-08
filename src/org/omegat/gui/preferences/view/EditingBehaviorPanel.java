@@ -78,6 +78,7 @@ public class EditingBehaviorPanel extends JPanel {
         initialSegCountLabel = new javax.swing.JLabel();
         initialSegCountSpinner = new javax.swing.JSpinner();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 32767));
+        cbSupportLockedSegments = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.GridBagLayout());
@@ -296,6 +297,16 @@ public class EditingBehaviorPanel extends JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         add(paraMarkText, gridBagConstraints);
+        
+        org.openide.awt.Mnemonics.setLocalizedText(cbSupportLockedSegments, OStrings.getString("WG_SUPPORT_LOCKED_SEGMENTS")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
+        add(cbSupportLockedSegments, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void radiosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radiosActionPerformed
@@ -324,6 +335,7 @@ public class EditingBehaviorPanel extends JPanel {
     javax.swing.JSpinner similaritySpinner;
     javax.swing.JCheckBox stopOnAlternativeTranslation;
     javax.swing.JCheckBox tagValidateOnLeave;
+    javax.swing.JCheckBox cbSupportLockedSegments;
     // End of variables declaration//GEN-END:variables
 
 }
