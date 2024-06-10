@@ -2187,4 +2187,9 @@ public class EditorController implements IEditor {
     public IAutoCompleter getAutoCompleter() {
         return editor.autoCompleter;
     }
+    
+    public void unlockSegment() {
+        editor.unlockSegment();
+    }
+
 }

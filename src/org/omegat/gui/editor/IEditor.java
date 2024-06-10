@@ -442,4 +442,7 @@ public interface IEditor {
      * Access the AutoCompleter
      */
     IAutoCompleter getAutoCompleter();
+    
+    /** Enable to edit a segment which was locked **/
+    void unlockSegment();
 }

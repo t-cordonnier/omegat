@@ -656,6 +656,7 @@ public final class MainWindowMenuHandler {
 
     public void editMultipleAlternateActionPerformed() {
         Core.getEditor().setAlternateTranslationForCurrentEntry(true);
+        Core.getEditor().unlockSegment();
     }
 
     public void editRegisterUntranslatedMenuItemActionPerformed() {
