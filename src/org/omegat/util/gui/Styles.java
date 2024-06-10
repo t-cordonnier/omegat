@@ -87,7 +87,10 @@ public final class Styles {
         COLOR_MARK_COMES_FROM_TM_XICE(UIManager.getColor("OmegaT.markComesFromTmXice")),
         COLOR_MARK_COMES_FROM_TM_X100PC(UIManager.getColor("OmegaT.markComesFromTmX100pc")),
         COLOR_MARK_COMES_FROM_TM_XAUTO(UIManager.getColor("OmegaT.markComesFromTmXauto")),
-        COLOR_MARK_COMES_FROM_TM_XENFORCED(UIManager.getColor("OmegaT.markComesFromTmXenforced")),
+
+        //COLOR_MARK_COMES_FROM_TM_XENFORCED(UIManager.getColor("OmegaT.markComesFromTmXenforced")),
+        COLOR_LOCKED_SEGMENT(UIManager.getColor("OmegaT.markComesFromTmXenforced")),
+
         COLOR_REPLACE(UIManager.getColor("OmegaT.replace")),
         COLOR_LANGUAGE_TOOLS(UIManager.getColor("OmegaT.languageTools")),
         COLOR_TRANSTIPS(UIManager.getColor("OmegaT.transTips")),

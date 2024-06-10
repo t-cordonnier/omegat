@@ -48,8 +48,8 @@ public class ComesFromAutoTMMarker implements IMarker {
             Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_X100PC.getColor(), 0.5F);
     protected static final HighlightPainter PAINTER_XAUTO = new TransparentHighlightPainter(
             Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XAUTO.getColor(), 0.5F);
-    protected static final HighlightPainter PAINTER_XENFORCED = new TransparentHighlightPainter(
-            Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XENFORCED.getColor(), 0.5F);
+    protected static final HighlightPainter PAINTER_LOCKED = new TransparentHighlightPainter(
+            Styles.EditorColor.COLOR_LOCKED_SEGMENT.getColor(), 0.5F);
 
     @Override
     public synchronized List<Mark> getMarksForEntry(SourceTextEntry ste, String sourceText,
@@ -57,23 +57,36 @@ public class ComesFromAutoTMMarker implements IMarker {
         if (!Core.getEditor().getSettings().isMarkAutoPopulated()) {
             return null;
         }
+        boolean isLocked = false;
         TMXEntry e = Core.getProject().getTranslationInfo(ste);
         if (e.linked == null) {
-            return null;
+            // Exception: PAINTER_LOCKED can also be used for locked segments
+            for (String prop: ste.getRawProperties()) {
+                if (prop.equals("LOCKED")) {
+                    isLocked = true;
+                }
+            }
+            if (!isLocked) {
+                return null;
+            }
         }
         Mark m = new Mark(Mark.ENTRY_PART.TRANSLATION, 0, translationText.length());
-        switch (e.linked) {
-        case xICE:
-            m.painter = PAINTER_XICE;
-            break;
-        case x100PC:
-            m.painter = PAINTER_X100PC;
-            break;
-        case xAUTO:
-            m.painter = PAINTER_XAUTO;
-            break;
-        case xENFORCED:
-            m.painter = PAINTER_XENFORCED;
+        if (isLocked) {
+            m.painter = PAINTER_LOCKED;
+        } else {
+            switch (e.linked) {
+            case xICE:
+                m.painter = PAINTER_XICE;
+                break;
+            case x100PC:
+                m.painter = PAINTER_X100PC;
+                break;
+            case xAUTO:
+                m.painter = PAINTER_XAUTO;
+                break;
+            case xENFORCED:
+                m.painter = PAINTER_LOCKED;
+            }
         }
         return Collections.singletonList(m);
     }
