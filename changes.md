@@ -6,9 +6,7 @@
 * New option in Prefs: create target files also commits them
 * New option in Prefs: close project creates target files
 * JSON stats file will not include timestamp
-
-* /tm/mt/ background colour? (in 6.1: in the editor pane, when a match is inserted from a TMX contained in a folder named mt, the background of the active segment is changed to red. The background is restored to normal when the segment is left)
-source: https://omegat.sourceforge.io/manual-latest/en/project.folder.html
+* Enforced translations are locked
 
 ## Version 5.7.2 (a978d82ee)
 
