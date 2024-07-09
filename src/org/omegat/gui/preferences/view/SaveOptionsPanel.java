@@ -187,7 +187,7 @@ public class SaveOptionsPanel extends JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(compileCloseCheckbox, OStrings.getString("TF_COMPILE_ON_CLOSE")); // NOI18N
         jPanel3.add(compileCloseCheckbox, java.awt.BorderLayout.WEST);
-        jPanel3.add(commitCompileCheckbox, java.awt.BorderLayout.CENTER);
+        jPanel3.add(commitCompileCheckbox, java.awt.BorderLayout.SOUTH);
         org.openide.awt.Mnemonics.setLocalizedText(commitCompileCheckbox, OStrings.getString("TF_COMMIT_ON_COMPILE")); // NOI18N
 
         add(jPanel3, java.awt.BorderLayout.SOUTH);
