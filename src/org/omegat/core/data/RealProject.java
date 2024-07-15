@@ -494,6 +494,11 @@ public class RealProject implements IProject {
                     List<ErrorReport> stes = Core.getTagValidation().listInvalidTags();
                     if (!stes.isEmpty()) {
                         Log.logInfoRB("LOG_DATAENGINE_CLOSE_NOT_COMPILED");
+                        if (Core.getMainWindow() != null) {
+                            javax.swing.JOptionPane.showMessageDialog((javax.swing.JFrame) Core.getMainWindow(), 
+                                    OStrings.getString("LOG_DATAENGINE_CLOSE_NOT_COMPILED"),   OStrings.getString("ERROR_TITLE"),
+                                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                        }
                         throw new Exception("Do not compile");
                     }
                 }
