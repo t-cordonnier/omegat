@@ -14,6 +14,8 @@
                2017-2018 Didier Briel
                2019 Thomas Cordonnier
                2020 Briac Pilpre
+               2023 Briac Pilpre, Thomas Cordonnier
+               2024 Thomas Cordonnier
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -79,6 +81,7 @@ import org.omegat.core.statistics.StatsResult;
 import org.omegat.core.team2.IRemoteRepository2;
 import org.omegat.core.team2.RebaseAndCommit;
 import org.omegat.core.team2.RemoteRepositoryProvider;
+import org.omegat.core.tagvalidation.ErrorReport;
 import org.omegat.core.threads.CommandMonitor;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
@@ -487,6 +490,13 @@ public class RealProject implements IProject {
     public void closeProject() {
         if (Preferences.isPreference(Preferences.ALWAYS_COMPILE_ON_CLOSE)) {
             try {
+                if (Preferences.isPreference(Preferences.TAGS_VALID_REQUIRED)) {
+                    List<ErrorReport> stes = Core.getTagValidation().listInvalidTags();
+                    if (!stes.isEmpty()) {
+                        Log.logInfoRB("LOG_DATAENGINE_CLOSE_NOT_COMPILED");
+                        throw new Exception("Do not compile");
+                    }
+                }
                 compileProject(".*");
             } catch (Exception ex) {
         
