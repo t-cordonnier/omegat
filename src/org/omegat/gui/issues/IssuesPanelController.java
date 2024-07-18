@@ -494,6 +494,7 @@ public class IssuesPanelController implements IIssues {
         this.instructions = instructions;
         init();
         SwingUtilities.invokeLater(() -> refreshData(jumpToEntry, Collections.emptyList()));
+        frame.setVisible(true); // will steal focus but this time it is intentional
     }
 
     void reset() {
