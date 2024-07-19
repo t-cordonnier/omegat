@@ -1340,16 +1340,6 @@ public class RealProject implements IProject {
                 try {
                     ExternalTMX newTMX = ExternalTMFactory.load(file);
                     newTransMemories.put(file.getPath(), newTMX);
-
-                    // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
-                    // directory separators into "/".
-                    if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {
-                        appendFromAutoTMX(newTMX, false);
-                    } else if (FileUtil.computeRelativePath(tmRoot, file)
-                            .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
-                        appendFromAutoTMX(newTMX, true);
-                    }
-
                 } catch (Exception e) {
                     String filename = file.getPath();
                     Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
@@ -1359,6 +1349,25 @@ public class RealProject implements IProject {
                 newTransMemories.remove(file.getPath());
             }
             transMemories = newTransMemories;
+        }, dir -> {
+            // Do auto-population only after everything is loaded, to ensure we do it in correct order
+            for (Map.Entry<String,ExternalTMX> me: transMemories.entrySet()) {
+                File file = new File(me.getKey());
+                try {
+                    // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
+                    // directory separators into "/".
+                    if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {
+                        appendFromAutoTMX(me.getValue(), false);
+                    } else if (FileUtil.computeRelativePath(tmRoot, file)
+                            .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
+                        appendFromAutoTMX(me.getValue(), true);
+                    }
+                } catch (Exception e) {
+                    String filename = file.getPath();
+                    Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                    Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                }
+            }
         });
         tmMonitor.checkChanges();
         tmMonitor.start();
