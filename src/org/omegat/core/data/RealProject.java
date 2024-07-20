@@ -1323,52 +1323,68 @@ public class RealProject implements IProject {
      * updates.
      */
     private void loadTM()  {
-        File tmRoot = new File(config.getTMRoot());
-        tmMonitor = new DirectoryMonitor(tmRoot, file -> {
-            if (!ExternalTMFactory.isSupported(file)) {
-                // not a TMX file
-                return;
-            }
-            if (file.getPath().replace('\\', '/').startsWith(config.getTMOtherLangRoot())) {
-                // tmx in other language, which is already shown in editor. Skip it.
-                return;
-            }
-            // create new translation memories map
-            Map<String, ExternalTMX> newTransMemories = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
-            newTransMemories.putAll(transMemories);
-            if (file.exists()) {
-                try {
-                    ExternalTMX newTMX = ExternalTMFactory.load(file);
-                    newTransMemories.put(file.getPath(), newTMX);
-                } catch (Exception e) {
-                    String filename = file.getPath();
-                    Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
-                    Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+        final File tmRoot = new File(config.getTMRoot());
+        
+        class TmCallback implements DirectoryMonitor.Callback, DirectoryMonitor.DirectoryCallback {
+            Map<String, ExternalTMX> modified = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
+            
+            // Called for each modified file
+            @Override
+            public void fileChanged(File file) {
+                if (!ExternalTMFactory.isSupported(file)) {
+                    // not a TMX file
+                    return;
                 }
-            } else {
-                newTransMemories.remove(file.getPath());
-            }
-            transMemories = newTransMemories;
-        }, dir -> {
-            // Do auto-population only after everything is loaded, to ensure we do it in correct order
-            for (Map.Entry<String,ExternalTMX> me: transMemories.entrySet()) {
-                File file = new File(me.getKey());
-                try {
-                    // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
-                    // directory separators into "/".
-                    if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {
-                        appendFromAutoTMX(me.getValue(), false);
-                    } else if (FileUtil.computeRelativePath(tmRoot, file)
-                            .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
-                        appendFromAutoTMX(me.getValue(), true);
+                if (file.getPath().replace('\\', '/').startsWith(config.getTMOtherLangRoot())) {
+                    // tmx in other language, which is already shown in editor. Skip it.
+                    return;
+                }
+                // create new translation memories map
+                Map<String, ExternalTMX> newTransMemories = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
+                newTransMemories.putAll(transMemories);
+                if (file.exists()) {
+                    try {
+                        ExternalTMX newTMX = ExternalTMFactory.load(file);
+                        newTransMemories.put(file.getPath(), newTMX);
+                    } catch (Exception e) {
+                        String filename = file.getPath();
+                        Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                        Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
                     }
-                } catch (Exception e) {
-                    String filename = file.getPath();
-                    Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
-                    Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                } else {
+                    newTransMemories.remove(file.getPath());
                 }
+                transMemories = newTransMemories;    
+                modified.put(file.getPath(), newTransMemories.get(file.getPath()));
             }
-        });
+            
+            // Called at the end of the loop
+            @Override
+            public void directoryChanged(File dir) {            
+                // Do auto-population only after everything is loaded, to ensure we do it in correct order
+                for (Map.Entry<String,ExternalTMX> me: modified.entrySet()) {
+                    File file = new File(me.getKey());
+                    try {
+                        // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
+                        // directory separators into "/".
+                        if (FileUtil.computeRelativePath(tmRoot, file).startsWith(OConsts.AUTO_TM + "/")) {
+                            appendFromAutoTMX(me.getValue(), false);
+                        } else if (FileUtil.computeRelativePath(tmRoot, file)
+                                .startsWith(OConsts.AUTO_ENFORCE_TM + '/')) {
+                            appendFromAutoTMX(me.getValue(), true);
+                        }
+                    } catch (Exception e) {
+                        String filename = file.getPath();
+                        Log.logErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                        Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
+                    }
+                }
+                modified.clear();
+            }
+        }
+    
+        final TmCallback callback = new TmCallback();
+        tmMonitor = new DirectoryMonitor(tmRoot, callback, callback); // same callback for file and directory
         tmMonitor.checkChanges();
         tmMonitor.start();
     }
