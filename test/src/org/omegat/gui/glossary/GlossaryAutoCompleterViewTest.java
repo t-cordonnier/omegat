@@ -338,10 +338,13 @@ public class GlossaryAutoCompleterViewTest extends TestCore {
 
             @Override
             public IAutoCompleter getAutoCompleter() {
-
                 return null;
             }
+            
 
+            @Override
+            public void unlockSegment() {
+            }
         });
         TestCoreInitializer.initGlossary(new IGlossaries() {
 

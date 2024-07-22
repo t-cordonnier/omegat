@@ -523,6 +523,10 @@ public abstract class TestCore {
             @Override
             public void activateEntry() {
             }
+
+            @Override
+            public void unlockSegment() {
+            }
         });
     }
 
