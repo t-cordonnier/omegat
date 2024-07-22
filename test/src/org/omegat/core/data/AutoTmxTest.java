@@ -54,12 +54,12 @@ public class AutoTmxTest {
     }
 
     @Test
-    public void test1() throws Exception {
+    public void testICE() throws Exception {
         ProjectProperties props = new ProjectProperties();
         props.setSourceLanguage("en");
         props.setTargetLanguage("fr");
         props.setTargetTokenizer(LuceneFrenchTokenizer.class);
-        File file = new File("test/data/autotmx/auto1.tmx");
+        File file = new File("test/data/autotmx/ice/auto1.tmx");
         ExternalTMX autoTMX = new ExternalTMFactory.TMXLoader(file)
                 .setDoSegmenting(props.isSentenceSegmentingEnabled())
                 .load(props.getSourceLanguage(), props.getTargetLanguage());
@@ -75,7 +75,7 @@ public class AutoTmxTest {
 
         p = new RealProject(props);
         p.projectTMX = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), false, new File(
-                "test/data/autotmx/project1.tmx"), new ProjectTMX.CheckOrphanedCallback() {
+                "test/data/autotmx/ice/project1.tmx"), new ProjectTMX.CheckOrphanedCallback() {
             public boolean existSourceInProject(String src) {
                 return true;
             }
@@ -96,12 +96,12 @@ public class AutoTmxTest {
     }
 
     @Test
-    public void test2() throws Exception {
+    public void testEnforce() throws Exception {
         ProjectProperties props = new ProjectProperties();
         props.setSourceLanguage("en");
         props.setTargetLanguage("fr");
         props.setTargetTokenizer(LuceneFrenchTokenizer.class);
-        File file = new File("test/data/enforcetmx/enforce1.tmx");
+        File file = new File("test/data/autotmx/enforce-test1/enforce1.tmx");
         ExternalTMX enforceTMX = new ExternalTMFactory.TMXLoader(file)
                 .setDoSegmenting(props.isSentenceSegmentingEnabled())
                 .load(props.getSourceLanguage(), props.getTargetLanguage());
@@ -110,7 +110,7 @@ public class AutoTmxTest {
 
         p = new RealProject(props);
         p.projectTMX = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), false,
-                new File("test/data/enforcetmx/project1.tmx"), new ProjectTMX.CheckOrphanedCallback() {
+                new File("test/data/autotmx/enforce-test1/project1.tmx"), new ProjectTMX.CheckOrphanedCallback() {
                     public boolean existSourceInProject(String src) {
                         return true;
                     }
