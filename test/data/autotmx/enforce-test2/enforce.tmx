@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tmx SYSTEM "tmx11.dtd">
+<tmx version="1.1">
+  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="5.7.3_0_d044811c3" segtype="sentence" srclang="en"/>
+  <body>
+<!-- Default translations -->
+    <tu>
+      <tuv lang="en">
+        <seg>Untranslated in memory, default in enforce</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction par défaut dans enforce</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>Untranslated in memory, alternative in enforce</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction par défaut dans enforce (pour les autres)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>Translated by default everywhere</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction par défaut dans enforce propagée partout</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>Alt translation in memory only</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction par défaut dans enforce</seg>
+      </tuv>
+    </tu>    
+    <tu>
+      <tuv lang="en">
+        <seg>Orphan in enforce (unused)</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Orphelin dans enforce (non utilisé)</seg>
+      </tuv>
+    </tu>
+<!-- Alternative translations -->
+    <tu>
+      <prop type="file">source-file.properties</prop>
+      <prop type="id">tu_2_A</prop>
+      <tuv lang="en">
+        <seg>Untranslated in memory, alternative in enforce</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction alternative dans enforce (première instance uniquement)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">source-file.properties</prop>
+      <prop type="id">tu_4_A</prop>
+      <tuv lang="en">
+        <seg>Translated by default erased once</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction écrasante</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">source-file.properties</prop>
+      <prop type="id">tu_6_B</prop>
+      <tuv lang="en">
+        <seg>Alt translation in both</seg>
+      </tuv>
+      <tuv lang="fr" changeid="thomas" changedate="20240924T151013Z" creationid="thomas" creationdate="20240924T151013Z">
+        <seg>Traduction alternative dans enforce</seg>
+      </tuv>
+    </tu>
+
+  </body>
+</tmx>
