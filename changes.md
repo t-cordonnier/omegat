@@ -12,6 +12,7 @@
 * New option in Prefs: close project creates target files
 * JSON stats file will not include timestamp
 * Enforced translations are locked
+* Removed function "Commit Source Files"
 
 ## Version 5.7.2 (a978d82ee)
 
