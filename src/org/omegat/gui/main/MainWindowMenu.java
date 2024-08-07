@@ -245,7 +245,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectMenu.addSeparator();
         projectMenu.add(projectSaveMenuItem = createMenuItem("TF_MENU_FILE_SAVE"));
         projectMenu.addSeparator();
-        projectMenu.add(projectCommitSourceFiles = createMenuItem("TF_MENU_FILE_COMMIT"));
+        //projectMenu.add(projectCommitSourceFiles = createMenuItem("TF_MENU_FILE_COMMIT"));
         projectMenu.add(projectCommitTargetFiles = createMenuItem("TF_MENU_FILE_TARGET"));
         projectMenu.addSeparator();
         projectMenu.add(projectCompileMenuItem = createMenuItem("TF_MENU_FILE_COMPILE"));
@@ -708,12 +708,12 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         if (Core.getParams().containsKey(CLIParameters.NO_TEAM)) {
             projectTeamNewMenuItem.setEnabled(false);
         }
-        if (isProjectOpened && Core.getProject().isRemoteProject()
+        /*if (isProjectOpened && Core.getProject().isRemoteProject()
                 && Core.getProject().getProjectProperties().getSourceDir().isUnderRoot()) {
             projectCommitSourceFiles.setEnabled(true);
         } else {
             projectCommitSourceFiles.setEnabled(false);
-        }
+        }*/
         if (isProjectOpened && Core.getProject().isRemoteProject()
                 && Core.getProject().getProjectProperties().getTargetDir().isUnderRoot()) {
             projectCommitTargetFiles.setEnabled(true);
@@ -818,7 +818,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JCheckBoxMenuItem optionsMTAutoFetchCheckboxMenuItem;
     JMenuItem optionsPreferencesMenuItem;
     JMenuItem projectCloseMenuItem;
-    JMenuItem projectCommitSourceFiles;
+    //JMenuItem projectCommitSourceFiles;
     JMenuItem projectCommitTargetFiles;
     JMenuItem projectCompileMenuItem;
     JMenuItem projectSingleCompileMenuItem;
