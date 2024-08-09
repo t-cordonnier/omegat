@@ -1,11 +1,11 @@
 # OmegaT -- cApStAn build
 
-## Version 5.7.4 ?? ()
+## Version 5.7.4 ?? () -- future release
 
 * 1225: Issues dialog gains focus when called and come to the front
 * Option to block target file creation also kicked when closing project
 
-## Version 5.7.3 () -- internal
+## Version 5.7.3 (3a8399a66) -- internal
 
 * Online help (F1) points to cApStAn's OmegaT guides
 * New option in Prefs: create target files also commits them
