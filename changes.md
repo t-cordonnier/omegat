@@ -4,6 +4,7 @@
 
 * 1225: Issues dialog gains focus when called and come to the front
 * Option to block target file creation also kicked when closing project
+* Updated updateConfigBundle.groovy scripts
 
 ## Version 5.7.3 (3a8399a66) -- internal
 
