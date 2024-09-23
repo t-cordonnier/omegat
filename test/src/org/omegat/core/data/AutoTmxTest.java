@@ -213,4 +213,57 @@ public class AutoTmxTest {
         EntryKey ek = new EntryKey(file, source, id, null, null, null);
         return new SourceTextEntry(ek, 0, null, null, new ArrayList<ProtectedPart>());
     }    
+    
+    @Test
+    public void testUpdate() throws Exception {
+        ProjectProperties props = new ProjectProperties();
+        props.setSourceLanguage("en");
+        props.setTargetLanguage("fr");
+        props.setTargetTokenizer(LuceneFrenchTokenizer.class);
+
+        Core.initializeConsole(new HashMap<String, String>());
+
+        p = new RealProject(props);
+        p.projectTMX = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), false,
+                new File("test/data/autotmx/update/project_save.tmx"), new ProjectTMX.CheckOrphanedCallback() {
+                    public boolean existSourceInProject(String src) {
+                        return true;
+                    }
+
+                    public boolean existEntryInProject(EntryKey key) {
+                        return true;
+                    }
+                });
+        HashMap<String,SourceTextEntry> entriesMap = new HashMap<>();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(
+            new java.io.FileInputStream("test/data/autotmx/update/source-file.properties")))) {
+            String line; SourceTextEntry ste;
+            while ((line = reader.readLine()) != null) {
+                if (! line.contains("=")) continue;                
+                String key = line.substring(0, line.indexOf("=")), val = line.substring(line.indexOf("=") + 1);
+                p.allProjectEntries.add(ste = createSTE("source-file.properties", key, val));
+                entriesMap.put(key, ste);
+            }
+        }
+        p.importHandler = new ImportFromAutoTMX(p, p.allProjectEntries);
+        
+        ExternalTMX tmx2022 = new ExternalTMFactory.TMXLoader(new File("test/data/autotmx/update/2022.tmx"))
+                .setDoSegmenting(props.isSentenceSegmentingEnabled())
+                .load(props.getSourceLanguage(), props.getTargetLanguage());
+        p.appendFromAutoTMX(tmx2022, false, true);
+        assertTrue(p.importHandler.didAnyChange);
+        checkTranslation(entriesMap.get("tu5_0"), "-- project default newer 2023 --", null);
+        checkTranslation(entriesMap.get("tu6_0"), "xx older ALTERNATIVE match from 2022 xx", TMXEntry.ExternalLinked.xAUTO);
+
+        ExternalTMX tmx2024 = new ExternalTMFactory.TMXLoader(new File("test/data/autotmx/update/2024.tmx"))
+                .setDoSegmenting(props.isSentenceSegmentingEnabled())
+                .load(props.getSourceLanguage(), props.getTargetLanguage());
+        p.appendFromAutoTMX(tmx2024, false, true);
+        assertTrue(p.importHandler.didAnyChange);                
+        checkTranslation(entriesMap.get("tu1_0"), "@@ newer default match from 2024 @@", TMXEntry.ExternalLinked.xAUTO);
+        checkTranslation(entriesMap.get("tu2_0"), "@@ newer ALTERNATIVE match from 2024 @@", TMXEntry.ExternalLinked.xAUTO);
+        checkTranslation(entriesMap.get("tu3_0"), "-- project alternative older 2023 --", null);
+    }
+    
+    
 }

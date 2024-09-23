@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tmx SYSTEM "tmx14.dtd">
+<tmx version="1.4">
+  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="5.7.2_0_ef8ba32b4" segtype="sentence" srclang="en"/>
+  <body>
+<!-- Default translations -->
+    <tu>
+      <tuv xml:lang="en">
+        <seg>5 proj-def-newer vs tm-def-older.</seg>
+      </tuv>
+      <tuv xml:lang="fr" changeid="fulano" changedate="20220508T133604Z" creationid="fulano" creationdate="20220508T133604Z">
+        <seg>xx older default match from 2022 xx</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv xml:lang="en">
+        <seg>7 proj-alt-newer vs tm-def-older.</seg>
+      </tuv>
+      <tuv xml:lang="fr" changeid="fulano" changedate="20220508T133635Z" creationid="fulano" creationdate="20220508T133635Z">
+        <seg>xx older default match from 2022 xx</seg>
+      </tuv>
+    </tu>
+<!-- Alternative translations -->
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu6_0</prop>
+      <tuv xml:lang="en">
+        <seg>6 proj-def-newer vs tm-ALT-older (update).</seg>
+      </tuv>
+      <tuv xml:lang="fr" changeid="fulano" changedate="20220508T133621Z" creationid="fulano" creationdate="20220508T133615Z">
+        <seg>xx older ALTERNATIVE match from 2022 xx</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu8_0</prop>
+      <tuv xml:lang="en">
+        <seg>8 proj-alt-newer vs tm-alt-older.</seg>
+      </tuv>
+      <tuv xml:lang="fr" changeid="fulano" changedate="20220508T133655Z" creationid="fulano" creationdate="20220508T133655Z">
+        <seg>xx older ALTERNATIVE match from 2022 xx</seg>
+      </tuv>
+    </tu>
+  </body>
+</tmx>

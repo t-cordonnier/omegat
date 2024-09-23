@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tmx SYSTEM "tmx11.dtd">
+<tmx version="1.1">
+  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="5.7.2_0_ef8ba32b4" segtype="sentence" srclang="en"/>
+  <body>
+<!-- Default translations -->
+    <tu>
+      <tuv lang="en">
+        <seg>1 proj-def-older vs tm-def-newer (update).</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143241Z" creationid="souto" creationdate="20230508T143241Z">
+        <seg>-- project default older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>2 proj-def-older vs tm-alt-newer (update).</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143241Z" creationid="souto" creationdate="20230508T143241Z">
+        <seg>-- project default older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>3 proj-ALT-older vs tm-DEF-newer.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143415Z" creationid="souto" creationdate="20230508T143415Z">
+        <seg>-- project default older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>4 proj-alt-older vs tm-alt-newer (update).</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143416Z" creationid="souto" creationdate="20230508T143416Z">
+        <seg>-- project default older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>5 proj-def-newer vs tm-def-older.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143303Z" creationid="souto" creationdate="20230508T143303Z">
+        <seg>-- project default newer 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>6 proj-def-newer vs tm-ALT-older (update).</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143329Z" creationid="souto" creationdate="20230508T143329Z">
+        <seg>-- project default newer 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>7 proj-alt-newer vs tm-def-older.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143351Z" creationid="souto" creationdate="20230508T143351Z">
+        <seg>-- project default newer 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="en">
+        <seg>8 proj-alt-newer vs tm-alt-older.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143353Z" creationid="souto" creationdate="20230508T143353Z">
+        <seg>-- project default newer 2023 --</seg>
+      </tuv>
+    </tu>
+<!-- Alternative translations -->
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu3_0</prop>
+      <tuv lang="en">
+        <seg>3 proj-ALT-older vs tm-DEF-newer.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143423Z" creationid="souto" creationdate="20230508T143423Z">
+        <seg>-- project alternative older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu4_0</prop>
+      <tuv lang="en">
+        <seg>4 proj-alt-older vs tm-alt-newer (update).</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143430Z" creationid="souto" creationdate="20230508T143430Z">
+        <seg>-- project alternative older 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu7_0</prop>
+      <tuv lang="en">
+        <seg>7 proj-alt-newer vs tm-def-older.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143403Z" creationid="souto" creationdate="20230508T143403Z">
+        <seg>-- project alternative newer 2023 --</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <prop type="file">file.properties</prop>
+      <prop type="id">tu8_0</prop>
+      <tuv lang="en">
+        <seg>8 proj-alt-newer vs tm-alt-older.</seg>
+      </tuv>
+      <tuv lang="fr" changeid="souto" changedate="20230508T143411Z" creationid="souto" creationdate="20230508T143411Z">
+        <seg>-- project alternative newer 2023 --</seg>
+      </tuv>
+    </tu>
+  </body>
+</tmx>

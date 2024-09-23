@@ -114,9 +114,21 @@ public class ImportFromAutoTMX {
                         if (!isDefaultTranslation) {
                             // the existing translation was a default translation but this one is not
                             setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                        } else {
+                            // both are default: override only if update
+                            if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
+                                    > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                                // Candidate is newer. Insert
+                                setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                            }
                         }
                     } else {
-                        // do nothing: alternative translation never overridden except with enforce
+                        // do nothing: alternative translation never overridden except with enforce or update
+                        if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
+                                > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                            // Candidate is newer. Insert
+                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                        }                        
                     }
                 } else { // TMXEntry with x-ids
                     if (!existTranslation.isTranslated() || existTranslation.defaultTranslation) {
