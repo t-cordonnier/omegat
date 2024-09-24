@@ -1326,7 +1326,8 @@ public class RealProject implements IProject {
         final File tmRoot = new File(config.getTMRoot());
         
         class TmCallback implements DirectoryMonitor.Callback, DirectoryMonitor.DirectoryCallback {
-            Map<String, ExternalTMX> modified = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
+            Map<String, ExternalTMX> newTransMemories = null;
+            boolean first = true;   // on load or reload, not on loop
             
             // Called for each modified file
             @Override
@@ -1340,8 +1341,10 @@ public class RealProject implements IProject {
                     return;
                 }
                 // create new translation memories map
-                Map<String, ExternalTMX> newTransMemories = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
-                newTransMemories.putAll(transMemories);
+                if (newTransMemories == null) { // optimisation: once per loop, not once per file!
+                    newTransMemories = newTransMemories = new TreeMap<>(new FileUtil.TmFileComparator(config.getTmDir().getAsFile()));
+                    newTransMemories.putAll(transMemories);
+                }
                 if (file.exists()) {
                     try {
                         ExternalTMX newTMX = ExternalTMFactory.load(file);
@@ -1354,15 +1357,21 @@ public class RealProject implements IProject {
                 } else {
                     newTransMemories.remove(file.getPath());
                 }
-                transMemories = newTransMemories;    
-                modified.put(file.getPath(), newTransMemories.get(file.getPath()));
             }
             
             // Called at the end of the loop
             @Override
             public void directoryChanged(File dir) {            
+                if (newTransMemories == null) {
+                    return;
+                }
+                transMemories = newTransMemories;
+                if (first == false) {
+                    return; // do auto-population only on load or reload
+                }
+                first = false;
                 // Do auto-population only after everything is loaded, to ensure we do it in correct order
-                for (Map.Entry<String,ExternalTMX> me: modified.entrySet()) {
+                for (Map.Entry<String,ExternalTMX> me: newTransMemories.entrySet()) {
                     File file = new File(me.getKey());
                     try {
                         // Please note the use of "/". FileUtil.computeRelativePath rewrites all other
@@ -1382,7 +1391,6 @@ public class RealProject implements IProject {
                         Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR", filename);
                     }
                 }
-                modified.clear();
             }
         }
     
