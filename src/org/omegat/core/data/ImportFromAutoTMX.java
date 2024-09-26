@@ -69,6 +69,11 @@ public class ImportFromAutoTMX {
     void process(ExternalTMX tmx, boolean isEnforcedTMX, boolean isUpdateTMX) {
 
         for (PrepareTMXEntry e : tmx.getEntries()) { // iterate by all entries in TMX
+            if (e.hasPropValue(ExternalTMFactory.TMXLoader.PROP_FOREIGN_MATCH, "true")) {
+                // Never automatically include matches from foreign languages.
+                continue;
+            }
+                
             List<SourceTextEntry> list = existEntries.get(e.source);
             if (list == null) {
                 continue; // there is no entries for this source
@@ -81,10 +86,6 @@ public class ImportFromAutoTMX {
                 boolean has100PC = id != null && e.hasPropValue(ProjectTMX.PROP_X100PC, id);
                 boolean hasAlternateTranslations = altTranslationMatches(e, ste.getKey());
 
-                if (e.hasPropValue(ExternalTMFactory.TMXLoader.PROP_FOREIGN_MATCH, "true")) {
-                    // Never automatically include matches from foreign languages.
-                    continue;
-                }
                 if (!hasICE && !has100PC) { // TMXEntry without x-ids
                     boolean isDefaultTranslation = !isAltTranslation(e);
                     
