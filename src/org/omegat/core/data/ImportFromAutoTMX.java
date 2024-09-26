@@ -80,84 +80,84 @@ public class ImportFromAutoTMX {
             }
             for (SourceTextEntry ste : list) { // for each TMX entry - get all sources in project
                 TMXEntry existTranslation = project.getTranslationInfo(ste);
-
-                String id = ste.getKey().id;
-                boolean hasICE = id != null && e.hasPropValue(ProjectTMX.PROP_XICE, id);
-                boolean has100PC = id != null && e.hasPropValue(ProjectTMX.PROP_X100PC, id);
-                boolean hasAlternateTranslations = altTranslationMatches(e, ste.getKey());
-
-                if (!hasICE && !has100PC) { // TMXEntry without x-ids
-                    boolean isDefaultTranslation = !isAltTranslation(e);
+                boolean isDefaultTranslation = !isAltTranslation(e);
                     
-                    if (!existTranslation.defaultTranslation && isDefaultTranslation) {
-                        // Existing translation is alt but the TMX entry is not.
-                        continue;
+                if (!existTranslation.defaultTranslation && isDefaultTranslation) {
+                    // Existing translation is alt but the TMX entry is not.
+                    continue;
+                }
+                if ((!isDefaultTranslation) && (!altTranslationMatches(e, ste.getKey()))) {
+                    // TMX entry is an alternative translation that does not match this STE.
+                    continue;
+                }
+                
+                if (isEnforcedTMX) {
+                    if ( (!existTranslation.isTranslated()
+                        || existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED
+                        || (!isDefaultTranslation && existTranslation.defaultTranslation)) ) {
+                        // If there's
+                        // - no translation or
+                        // - the existing translation doesn't come from an enforced TM or
+                        // - the existing enforced translation was a default translation but this one is not
+                        setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xENFORCED);
                     }
-                    if (!isDefaultTranslation && !hasAlternateTranslations) {
-                        // TMX entry is an alternative translation that does not match this STE.
-                        continue;
-                    }
-                    if (isEnforcedTMX) {
-                        if ( (!existTranslation.isTranslated()
-                            || existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED
-                            || (!isDefaultTranslation && existTranslation.defaultTranslation)) ) {
-                            // If there's
-                            // - no translation or
-                            // - the existing translation doesn't come from an enforced TM or
-                            // - the existing enforced translation was a default translation but this one is not
-                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xENFORCED);
-                        }
-                    } else if (!existTranslation.isTranslated()) {
-                        // take as is
-                        setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                    } else if (existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED) {
-                        if (existTranslation.defaultTranslation) {
-                            // override only if the candidate is not a default
-                            if (!isDefaultTranslation) {
-                                // the existing translation was a default translation but this one is not
-                                setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                            } else {
-                                // both are default: override only if update
-                                if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
-                                        > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
-                                    // Candidate is newer. Insert
-                                    setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                                }
-                            }
+                } else if (!existTranslation.isTranslated()) {
+                    // take as is
+                    setTranslation(ste, e, isDefaultTranslation, newContextForEntry(e, existTranslation, ste));
+                } else if (existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED) {
+                    if (existTranslation.defaultTranslation) {
+                        // override only if the candidate is not a default
+                        if (!isDefaultTranslation) {
+                            // the existing translation was a default translation but this one is not
+                            setTranslation(ste, e, isDefaultTranslation, newContextForEntry(e, existTranslation, ste));
                         } else {
-                            // do nothing: alternative translation never overridden except with enforce or update
+                            // both are default: override only if update
                             if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
                                     > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
                                 // Candidate is newer. Insert
                                 setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                             }
                         }
-                    }
-                } else { // TMXEntry with x-ids
-                    if (!existTranslation.isTranslated() || existTranslation.defaultTranslation) {
-                        // need to update if id in xICE or x100PC
-                        if (hasICE) {
-                            setTranslation(ste, e, false, TMXEntry.ExternalLinked.xICE);
-                        } else if (has100PC) {
-                            setTranslation(ste, e, false, TMXEntry.ExternalLinked.x100PC);
-                        }
-                    } else if (existTranslation.linked == TMXEntry.ExternalLinked.xICE
-                            || existTranslation.linked == TMXEntry.ExternalLinked.x100PC) {
-                        // already contains x-ice
-                        if (hasICE
-                                && !Objects.equals(existTranslation.translation, e.translation)) {
-                            setTranslation(ste, e, false, TMXEntry.ExternalLinked.xICE);
-                        }
-                    } else if (existTranslation.linked == TMXEntry.ExternalLinked.x100PC) {
-                        // already contains x-100pc
-                        if (has100PC
-                                && !Objects.equals(existTranslation.translation, e.translation)) {
-                            setTranslation(ste, e, false, TMXEntry.ExternalLinked.x100PC);
+                    } else {
+                        TMXEntry.ExternalLinked ctxt = newContextForEntry(e, existTranslation, ste);
+                        if (ctxt != null) {
+                            setTranslation(ste, e, isDefaultTranslation, ctxt);
+                        }                        
+                        else if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
+                                > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                            // Candidate is newer. Insert
+                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                         }
                     }
                 }
             }
         }
+    }
+    
+    /** Null if we should not update; AUTO, 100PC or ICE else **/
+    private TMXEntry.ExternalLinked newContextForEntry(PrepareTMXEntry e, TMXEntry existTranslation, SourceTextEntry ste) {
+        String id = ste.getKey().id;
+        boolean hasICE = id != null && e.hasPropValue(ProjectTMX.PROP_XICE, id);
+        boolean has100PC = id != null && e.hasPropValue(ProjectTMX.PROP_X100PC, id);    
+                
+        if (!existTranslation.isTranslated() || existTranslation.defaultTranslation) {
+            // need to update if id in xICE or x100PC
+            if (hasICE) {
+                return TMXEntry.ExternalLinked.xICE;
+            } else if (has100PC) {
+                return TMXEntry.ExternalLinked.x100PC;
+            } else {
+                return TMXEntry.ExternalLinked.xAUTO;
+            }
+        } else if (Objects.equals(existTranslation.translation, e.translation)) {
+            return null; // no override, even if context changes
+        } else if (hasICE) {
+            return TMXEntry.ExternalLinked.xICE;
+        } else if (has100PC && (existTranslation.linked == TMXEntry.ExternalLinked.x100PC)) {
+            return TMXEntry.ExternalLinked.x100PC;
+        } else {
+            return null; // no override 
+        }                
     }
 
     private boolean isAltTranslation(PrepareTMXEntry entry) {
@@ -171,6 +171,8 @@ public class ImportFromAutoTMX {
                 hasFileProp = true;
             } else if (p.getType().equals(ProjectTMX.PROP_ID)
                     || p.getType().equals(ProjectTMX.ATTR_TUID)
+                    || p.getType().equals(ProjectTMX.PROP_XICE)
+                    || p.getType().equals(ProjectTMX.PROP_X100PC)
                     || p.getType().equals(ProjectTMX.PROP_NEXT)
                     || p.getType().equals(ProjectTMX.PROP_PATH)
                     || p.getType().equals(ProjectTMX.PROP_PREV)) {
@@ -185,6 +187,7 @@ public class ImportFromAutoTMX {
             return false;
         }
         String file = null, id = null, next = null, prev = null, path = null;
+        boolean hasICEor100PC = false;
         for (TMXProp p : entry.otherProperties) {
             if (ProjectTMX.PROP_FILE.equals(p.getType())) {
                 file = p.getValue();
@@ -193,6 +196,10 @@ public class ImportFromAutoTMX {
             } else if (ProjectTMX.ATTR_TUID.equals(p.getType()) && id == null) {
                 // Use @tuid as fallback when id prop is not available
                 id = p.getValue();
+            } else if (ProjectTMX.PROP_XICE.equals(p.getType())) {
+                hasICEor100PC = hasICEor100PC || p.getValue().equals(key.id);
+            } else if (ProjectTMX.PROP_X100PC.equals(p.getType())) {
+                hasICEor100PC = hasICEor100PC || p.getValue().equals(key.id);
             } else if (ProjectTMX.PROP_NEXT.equals(p.getType())) {
                 next = p.getValue();
             } else if (ProjectTMX.PROP_PREV.equals(p.getType())) {
@@ -201,7 +208,11 @@ public class ImportFromAutoTMX {
                 path = p.getValue();
             }
         }
-        return key.equals(new EntryKey(file, entry.source, id, prev, next, path));
+        if (hasICEor100PC) {
+            return EntryKey.isIgnoreFileContext() ? true : Objects.equals(file, key.file);
+        } else {
+            return key.equals(new EntryKey(file, entry.source, id, prev, next, path));
+        }
     }
 
     private void setTranslation(SourceTextEntry entry, PrepareTMXEntry trans, boolean defaultTranslation,
