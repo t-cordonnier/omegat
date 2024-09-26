@@ -109,26 +109,28 @@ public class ImportFromAutoTMX {
                     } else if (!existTranslation.isTranslated()) {
                         // take as is
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                    } else if (existTranslation.defaultTranslation) {
-                        // override only if the candidate is not a default
-                        if (!isDefaultTranslation) {
-                            // the existing translation was a default translation but this one is not
-                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                    } else if (existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED) {
+                        if (existTranslation.defaultTranslation) {
+                            // override only if the candidate is not a default
+                            if (!isDefaultTranslation) {
+                                // the existing translation was a default translation but this one is not
+                                setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                            } else {
+                                // both are default: override only if update
+                                if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
+                                        > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
+                                    // Candidate is newer. Insert
+                                    setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                                }
+                            }
                         } else {
-                            // both are default: override only if update
+                            // do nothing: alternative translation never overridden except with enforce or update
                             if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
                                     > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
                                 // Candidate is newer. Insert
                                 setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
                             }
                         }
-                    } else {
-                        // do nothing: alternative translation never overridden except with enforce or update
-                        if (isUpdateTMX && Math.max(e.changeDate, e.creationDate) 
-                                > Math.max(existTranslation.changeDate, existTranslation.creationDate)) {
-                            // Candidate is newer. Insert
-                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
-                        }                        
                     }
                 } else { // TMXEntry with x-ids
                     if (!existTranslation.isTranslated() || existTranslation.defaultTranslation) {
