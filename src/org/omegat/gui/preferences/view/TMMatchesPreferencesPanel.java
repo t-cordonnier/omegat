@@ -62,8 +62,11 @@ public class TMMatchesPreferencesPanel extends JPanel {
         sortMatchesList = new javax.swing.JComboBox<>();
         fuzzyThresholdLabel = new javax.swing.JLabel();
         fuzzyMatchThreshold = new javax.swing.JSpinner();
+        matchesCountLabel = new javax.swing.JLabel();
+        matchesCountSpinner = new javax.swing.JSpinner();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 10), new java.awt.Dimension(0, 10), new java.awt.Dimension(32767, 10));
         jPanel7 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         tagHandlingLabel = new javax.swing.JLabel();
         displayLevel2Tags = new javax.swing.JCheckBox();
         useSlash = new javax.swing.JCheckBox();
@@ -120,10 +123,30 @@ public class TMMatchesPreferencesPanel extends JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         jPanel1.add(fuzzyMatchThreshold, gridBagConstraints);
 
+        org.openide.awt.Mnemonics.setLocalizedText(matchesCountLabel, OStrings.getString("EXT_TMX_MATCHES_COUNT"));
+        matchesCountLabel.setName(""); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanel1.add(matchesCountLabel, gridBagConstraints);
+        matchesCountLabel.getAccessibleContext().setAccessibleName("<EXT_TMX_MATCHES_COUNT>");
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
+        jPanel1.add(matchesCountSpinner, gridBagConstraints);
+        matchesCountSpinner.setModel(new javax.swing.SpinnerNumberModel(5, 0, 20, 1));        
+
         add(jPanel1);
         add(filler2);
 
         jPanel7.setLayout(new javax.swing.BoxLayout(jPanel7, javax.swing.BoxLayout.Y_AXIS));
+        jPanel7.add(jPanel2);
 
         org.openide.awt.Mnemonics.setLocalizedText(tagHandlingLabel, OStrings.getString("EXT_TMX_DESCRIPTION")); // NOI18N
         jPanel7.add(tagHandlingLabel);
@@ -204,12 +227,15 @@ public class TMMatchesPreferencesPanel extends JPanel {
     private javax.swing.JLabel fuzzyThresholdLabel;
     javax.swing.JButton insertButton;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
+    protected javax.swing.JSpinner matchesCountSpinner;
     javax.swing.JCheckBox keepForeignMatches;
+    private javax.swing.JLabel matchesCountLabel;
     javax.swing.JTextArea matchesTemplate;
     private javax.swing.JLabel sortMatchesLabel;
     javax.swing.JComboBox<SORT_KEY> sortMatchesList;

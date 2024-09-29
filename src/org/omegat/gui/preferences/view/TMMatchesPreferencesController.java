@@ -99,6 +99,8 @@ public class TMMatchesPreferencesController extends BasePreferencesController {
         panel.matchesTemplate.setText(Preferences.getPreferenceDefault(Preferences.EXT_TMX_MATCH_TEMPLATE,
                 MatchesVarExpansion.DEFAULT_TEMPLATE));
         panel.matchesTemplate.setCaretPosition(0);
+        panel.matchesCountSpinner.setValue(Preferences.getPreferenceDefault(
+                        Preferences.EXT_TMX_MATCH_DISPLAY_COUNT, OConsts.MAX_NEAR_STRINGS));
         panel.fuzzyMatchThreshold.setValue(Preferences.getPreferenceDefault(Preferences.EXT_TMX_FUZZY_MATCH_THRESHOLD,
                 OConsts.FUZZY_MATCH_THRESHOLD));
     }
@@ -122,6 +124,7 @@ public class TMMatchesPreferencesController extends BasePreferencesController {
         Preferences.setPreference(Preferences.EXT_TMX_SHOW_LEVEL2, panel.displayLevel2Tags.isSelected());
         Preferences.setPreference(Preferences.EXT_TMX_USE_SLASH, panel.useSlash.isSelected());
         Preferences.setPreference(Preferences.EXT_TMX_MATCH_TEMPLATE, panel.matchesTemplate.getText());
+        Preferences.setPreference(Preferences.EXT_TMX_MATCH_DISPLAY_COUNT, panel.matchesCountSpinner.getValue().toString());
         // TMX need to be reloaded to include/disable the foreign matches.
         if (Preferences.isPreference(Preferences.EXT_TMX_KEEP_FOREIGN_MATCH) != panel.keepForeignMatches.isSelected()) {
             this.setReloadRequired(true);
