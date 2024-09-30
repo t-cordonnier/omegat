@@ -87,6 +87,7 @@ public class ImportFromAutoTMX {
                 }
                 if (!hasICE && !has100PC) { // TMXEntry without x-ids
                     boolean isDefaultTranslation = !isAltTranslation(e);
+                    
                     if (!existTranslation.defaultTranslation && isDefaultTranslation) {
                         // Existing translation is alt but the TMX entry is not.
                         continue;
@@ -95,18 +96,27 @@ public class ImportFromAutoTMX {
                         // TMX entry is an alternative translation that does not match this STE.
                         continue;
                     }
-                    if (isEnforcedTMX && (!existTranslation.isTranslated()
+                    if (isEnforcedTMX) {
+                        if ( (!existTranslation.isTranslated()
                             || existTranslation.linked != TMXEntry.ExternalLinked.xENFORCED
-                            || (!isDefaultTranslation && existTranslation.defaultTranslation))) {
-                        // If there's
-                        // - no translation or
-                        // - the existing translation doesn't come from an enforced TM or
-                        // - the existing enforced translation was a default translation but this one is not
-                        setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xENFORCED);
-                    } else if (!existTranslation.isTranslated()
-                            || (!isDefaultTranslation && hasAlternateTranslations)) {
-                        // default translation not exist - use from auto tmx
+                            || (!isDefaultTranslation && existTranslation.defaultTranslation)) ) {
+                            // If there's
+                            // - no translation or
+                            // - the existing translation doesn't come from an enforced TM or
+                            // - the existing enforced translation was a default translation but this one is not
+                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xENFORCED);
+                        }
+                    } else if (!existTranslation.isTranslated()) {
+                        // take as is
                         setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                    } else if (existTranslation.defaultTranslation) {
+                        // override only if the candidate is not a default
+                        if (!isDefaultTranslation) {
+                            // the existing translation was a default translation but this one is not
+                            setTranslation(ste, e, isDefaultTranslation, TMXEntry.ExternalLinked.xAUTO);
+                        }
+                    } else {
+                        // do nothing: alternative translation never overridden except with enforce
                     }
                 } else { // TMXEntry with x-ids
                     if (!existTranslation.isTranslated() || existTranslation.defaultTranslation) {
