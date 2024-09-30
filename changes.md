@@ -5,6 +5,7 @@
 * Option to block target file creation also kicked when closing project
 * Updated updateConfigBundle.groovy scripts
 * RFE#1754: User preference for maximum number of TM matches displayed
+* M68: Bugfix for unexpected auto-population behaviour
 
 ## Version 5.7.3_0 (3a8399a66) -- internal
 
