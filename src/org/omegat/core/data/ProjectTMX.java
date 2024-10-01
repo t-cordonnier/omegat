@@ -220,6 +220,9 @@ public class ProjectTMX {
                     } else if (en.getValue().linked == TMXEntry.ExternalLinked.x100PC) {
                         p.add(PROP_X100PC);
                         p.add(k.id);
+                    } else if (en.getValue().linked == TMXEntry.ExternalLinked.xAUTO) {
+                        p.add(PROP_XAUTO);
+                        p.add("auto");
                     }
                 }
                 wr.writeEntry(en.getKey().sourceText, en.getValue().translation, en.getValue(), p);
