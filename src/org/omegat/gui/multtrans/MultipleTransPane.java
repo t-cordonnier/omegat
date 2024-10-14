@@ -36,6 +36,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -138,27 +140,44 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
             scrollPane.notify(true);
         }
 
-        StringBuilder o = new StringBuilder();
+        Map<String, DisplayedEntry> entryMap = new TreeMap<>();
         for (MultipleTransFoundEntry e : data) {
-            DisplayedEntry de = new DisplayedEntry();
-            de.entry = e;
-            de.start = o.length();
             if (e.entry.translation == null) {
                 continue;
             }
-            if (e.key != null) {
-                o.append(e.entry.translation).append('\n');
-                o.append('<').append(e.key.file);
-                if (e.key.id != null) {
-                    o.append('/').append(e.key.id);
+            DisplayedEntry de = entryMap.get(e.entry.translation);
+            if (de == null) {
+                entryMap.put(e.entry.translation, de = new DisplayedEntry()); 
+                de.entry = e;                
+            } else {
+                DisplayedEntry de1 = new DisplayedEntry(); 
+                de1.entry = e;
+                de1.next = de;
+                entryMap.put(e.entry.translation, de1); 
+                de = de1;
+            }
+        }
+        
+        StringBuilder o = new StringBuilder();
+        for (Map.Entry<String, DisplayedEntry> me: entryMap.entrySet()) {
+            DisplayedEntry de = me.getValue();            
+            de.start = o.length();
+            if (de.entry.key != null) {
+                o.append(de.entry.entry.translation).append('\n');
+                o.append('<').append(de.entry.key.file);
+                if (de.entry.key.id != null) {
+                    o.append('/').append(de.entry.key.id);
                 }
                 o.append(">\n");
-                if (e.key.prev != null && e.key.next != null) {
-                    o.append('(').append(StringUtil.truncate(e.key.prev, 10));
-                    o.append(" <...> ").append(StringUtil.truncate(e.key.next, 10)).append(")\n");
+                if (de.entry.key.prev != null && de.entry.key.next != null) {
+                    o.append('(').append(StringUtil.truncate(de.entry.key.prev, 10));
+                    o.append(" <...> ").append(StringUtil.truncate(de.entry.key.next, 10)).append(")\n");
+                }
+                if (de.next != null) {
+                    o.append(" (").append(StringUtil.format(OStrings.getString("SW_NR_OF_MORE"), de.getMergedCount())).append(")");
                 }
             } else {
-                o.append(e.entry.translation).append('\n');
+                o.append(de.entry.entry.translation).append('\n');
             }
             de.end = o.length();
             entries.add(de);
@@ -259,6 +278,16 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
     protected static class DisplayedEntry {
         int start, end;
         MultipleTransFoundEntry entry;
+        
+        DisplayedEntry next;
+        
+        public int getMergedCount() {
+            if (next == null) {
+                return 0;
+            } else {
+                return 1 + next.getMergedCount();
+            }
+        }
     }
 
     @Override
