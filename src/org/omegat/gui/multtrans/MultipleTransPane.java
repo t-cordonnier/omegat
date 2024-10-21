@@ -47,6 +47,7 @@ import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
+import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.editor.IPopupMenuConstructor;
@@ -164,15 +165,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
             de.start = o.length();
             if (de.entry.key != null) {
                 o.append(de.entry.entry.translation).append('\n');
-                o.append('<').append(de.entry.key.file);
-                if (de.entry.key.id != null) {
-                    o.append('/').append(de.entry.key.id);
-                }
-                o.append(">\n");
-                if (de.entry.key.prev != null && de.entry.key.next != null) {
-                    o.append('(').append(StringUtil.truncate(de.entry.key.prev, 10));
-                    o.append(" <...> ").append(StringUtil.truncate(de.entry.key.next, 10)).append(")\n");
-                }
+                addEntryKey(o, de.entry.key);
                 if (de.next != null) {
                     o.append(" (").append(StringUtil.format(OStrings.getString("SW_NR_OF_MORE"), de.getMergedCount())).append(")");
                 }
@@ -185,6 +178,18 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         }
 
         setText(o.toString());
+    }
+    
+    private static void addEntryKey(StringBuilder o, EntryKey key) {
+        o.append('<').append(key.file);
+        if (key.id != null) {
+            o.append('/').append(key.id);
+        }
+        o.append(">\n");
+        if (key.prev != null && key.next != null) {
+            o.append('(').append(StringUtil.truncate(key.prev, 10));
+            o.append(" <...> ").append(StringUtil.truncate(key.next, 10)).append(")\n");
+        }    
     }
 
     @Override
@@ -272,6 +277,17 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         item.setEnabled(de != null);
         if (de != null) {
             item.addActionListener(e -> Core.getEditor().gotoEntry(de.entry.sourceText, de.entry.key));
+        }
+        
+        if (de.next != null) {
+            popup.addSeparator();
+            for (DisplayedEntry de1 = de.next; de1 != null; ) { 
+                StringBuilder o = new StringBuilder();
+                addEntryKey(o, de1.entry.key);
+                item = popup.add(o.toString());
+                item.setEnabled(false);
+                de1 = de1.next;
+            }
         }
     }
 
