@@ -294,7 +294,7 @@ public class CalcMatchStatistics extends LongProcessThread {
     int calcMaxSimilarity(SourceTextEntry ste) {
         String srcNoXmlTags = removeXmlTags(ste);
         FindMatches localFinder = finder.get();
-        List<NearString> nears = localFinder.search(srcNoXmlTags, true, false, this::isInterrupted);
+        List<NearString> nears = localFinder.search(ste, srcNoXmlTags, true, false, this::isInterrupted);
         final Token[] strTokensStem = localFinder.tokenizeAll(ste.getSrcText());
         int maxSimilarity = 0;
         CACHE: for (NearString near : nears) {

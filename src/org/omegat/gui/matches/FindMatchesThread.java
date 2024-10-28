@@ -80,7 +80,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
 
         try {
             FindMatches finder = new FindMatches(project, OConsts.MAX_NEAR_STRINGS, true, false);
-            List<NearString> result = finder.search(processedEntry.getSrcText(), true, true, this::isEntryChanged);
+            List<NearString> result = finder.search(processedEntry, null, true, true, this::isEntryChanged);
             LOGGER.finer(() -> "Time for find matches: " + (System.currentTimeMillis() - before));
             return result;
         } catch (FindMatches.StoppedException ex) {

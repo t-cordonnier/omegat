@@ -150,11 +150,11 @@ public class FindMatches {
                 OConsts.FUZZY_MATCH_THRESHOLD);
     }
 
-    public List<NearString> search(final String searchText, final boolean requiresTranslation,
+    public List<NearString> search(final SourceTextEntry entry, final String searchText, final boolean requiresTranslation,
             final boolean fillSimilarityData, final IStopped stop) throws StoppedException {
         result = new ArrayList<>(OConsts.MAX_NEAR_STRINGS + 1);
 
-        srcText = searchText;
+        srcText = searchText == null ? entry.getSrcText() : searchText;
         removedText = "";
 
         // remove part that is to be removed according to user settings.
@@ -177,13 +177,16 @@ public class FindMatches {
         /* HP: includes non - word tokens */
 
         // travel by project entries, including orphaned
+        TMXEntry current = project.getTranslationInfo(entry);
         if (project.getProjectProperties().isSupportDefaultTranslations()) {
             project.iterateByDefaultTranslations(new DefaultTranslationsIterator() {
                 public void iterate(String source, TMXEntry trans) {
                     checkStopped(stop);
-                    if (!searchExactlyTheSame && source.equals(searchText)) {
-                        // skip original==original entry comparison
-                        return;
+                    if (!searchExactlyTheSame && source.equals(entry.getSrcText())) {
+                        // skip original==original entry comparison -- but only if the candidate is also default
+                        if (current.defaultTranslation) {
+                            return;
+                        }
                     }
                     if (requiresTranslation && trans.translation == null) {
                         return;
@@ -198,9 +201,11 @@ public class FindMatches {
         project.iterateByMultipleTranslations(new MultipleTranslationsIterator() {
             public void iterate(EntryKey source, TMXEntry trans) {
                 checkStopped(stop);
-                if (!searchExactlyTheSame && source.sourceText.equals(searchText)) {
-                    // skip original==original entry comparison
-                    return;
+                if (!searchExactlyTheSame && source.sourceText.equals(entry.getSrcText())) {
+                    // skip original==original entry comparison -- but only if same context
+                    if (!current.defaultTranslation) {
+                        return;
+                    }
                 }
                 if (requiresTranslation && trans.translation == null) {
                     return;
@@ -273,7 +278,7 @@ public class FindMatches {
                     String onesrc = segments.get(i);
 
                     // find match for separate segment
-                    List<NearString> segmentMatch = separateSegmentMatcher.search(onesrc, requiresTranslation, false,
+                    List<NearString> segmentMatch = separateSegmentMatcher.search(entry, onesrc, requiresTranslation, false,
                             stop);
                     if (!segmentMatch.isEmpty()
                             && segmentMatch.get(0).scores[0].score >= SUBSEGMENT_MATCH_THRESHOLD) {
