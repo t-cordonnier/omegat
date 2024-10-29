@@ -211,9 +211,19 @@ public class FindMatches {
                     return;
                 }
                 String fileName = project.isOrphaned(source) ? ORPHANED_FILE_NAME : null;
+                List<TMXProp> props = new ArrayList<>(5);
+                if (source.file != null) {
+                    props.add(new TMXProp("file", source.file));
+                }
+                if (source.id != null) {
+                    props.add(new TMXProp("id", source.id));
+                }
+                if (source.path != null) {
+                    props.add(new TMXProp("path", source.path));
+                }
                 processEntry(source, source.sourceText, trans.translation, NearString.MATCH_SOURCE.MEMORY,
                         false, 0, fileName, trans.creator, trans.creationDate, trans.changer,
-                        trans.changeDate, null);
+                        trans.changeDate, props);
             }
         });
 
