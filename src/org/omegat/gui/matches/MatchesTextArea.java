@@ -581,7 +581,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                 for (int i = 0; i < m.projs.length; i++) {
                     String proj = m.projs[i];
                     StringBuilder b = new StringBuilder();
-                    if (proj.equals("")) {
+                    if ((proj == null) || (proj.equals(""))) {
                         b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
                     } else {
                         b.append(proj);
