@@ -178,7 +178,7 @@ public class FindMatches {
 
         // travel by project entries, including orphaned
         TMXEntry current = project.getTranslationInfo(entry);
-        if (project.getProjectProperties().isSupportDefaultTranslations()) {
+        //if (project.getProjectProperties().isSupportDefaultTranslations()) {
             project.iterateByDefaultTranslations(new DefaultTranslationsIterator() {
                 public void iterate(String source, TMXEntry trans) {
                     checkStopped(stop);
@@ -197,13 +197,13 @@ public class FindMatches {
                             null);
                 }
             });
-        }
+        //}
         project.iterateByMultipleTranslations(new MultipleTranslationsIterator() {
             public void iterate(EntryKey source, TMXEntry trans) {
                 checkStopped(stop);
                 if (!searchExactlyTheSame && source.sourceText.equals(entry.getSrcText())) {
                     // skip original==original entry comparison -- but only if same context
-                    if (!current.defaultTranslation) {
+                    if (source.equals(entry.getKey())) {
                         return;
                     }
                 }
