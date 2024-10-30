@@ -112,9 +112,15 @@ public final class CoreEvents {
         EDITOR_EVENT_LISTENERS.remove(listener);
     }
 
-    /** Fire event. */
-    public static void fireProjectChange(final IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
-        SwingUtilities.invokeLater(() -> {
+    static class ProjectEventWaiter implements Runnable {
+        private boolean end;
+        private IProjectEventListener.PROJECT_CHANGE_TYPE eventType;
+
+        public ProjectEventWaiter(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
+            this.eventType = eventType;
+        }
+
+        public void run() {
             Log.logInfoRB("LOG_INFO_EVENT_PROJECT_CHANGE", eventType);
             for (IProjectEventListener listener : PROJECT_EVENT_LISTENERS) {
                 try {
@@ -123,7 +129,26 @@ public final class CoreEvents {
                     log("ERROR_EVENT_PROJECT_CHANGE", t);
                 }
             }
-        });
+            end = true;
+        }
+    }
+
+    private static java.util.Map<IProjectEventListener.PROJECT_CHANGE_TYPE, ProjectEventWaiter> projEvWaiters;
+    static {
+        projEvWaiters = new java.util.EnumMap<IProjectEventListener.PROJECT_CHANGE_TYPE, ProjectEventWaiter>(IProjectEventListener.PROJECT_CHANGE_TYPE.class);
+        for (IProjectEventListener.PROJECT_CHANGE_TYPE type : IProjectEventListener.PROJECT_CHANGE_TYPE.values()) {
+            projEvWaiters.put(type, new ProjectEventWaiter(type));
+        }
+    }
+
+    /** Fire event. */
+    public static void fireProjectChange(final IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
+        projEvWaiters.get(eventType).end = false; // must be done in calling thread, before starting!
+        SwingUtilities.invokeLater(projEvWaiters.get(eventType));
+    }
+
+    public static boolean isFinishedProjectEventLoop(IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
+        return projEvWaiters.get(eventType).end;
     }
 
     /** Fire event. */

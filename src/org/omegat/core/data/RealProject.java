@@ -687,6 +687,10 @@ public class RealProject implements IProject {
         // repository to be able to modify the resulting files before sending them to
         // the repository (BUGS#1176)
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
+        // CapStan-M85 : wait for events to be finished
+        while (! CoreEvents.isFinishedProjectEventLoop(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE)) {
+            Thread.yield();
+        }
 
         if (doPostProcessing) {
 
