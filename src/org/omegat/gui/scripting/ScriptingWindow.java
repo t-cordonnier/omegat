@@ -115,7 +115,7 @@ public class ScriptingWindow {
 
     private static final Logger LOGGER = Logger.getLogger(ScriptingWindow.class.getName());
 
-    static ScriptingWindow window;
+    public static ScriptingWindow window;
 
     public static void loadPlugins() {
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
@@ -1077,6 +1077,14 @@ public class ScriptingWindow {
         //m_scriptList.setListData(items.toArray(new ScriptItem[items.size()]));
     }
 
+    public void initScriptsLoop() {
+        monitor.m_projectEventListener.end = false;
+    }
+    
+    public boolean isScriptsLoopFinished() {
+        return monitor.m_projectEventListener.end;
+    }
+    
     public static final String DEFAULT_SCRIPTS_DIR = "scripts";
 
     protected static final int NUMBERS_OF_QUICK_SCRIPTS = 12;

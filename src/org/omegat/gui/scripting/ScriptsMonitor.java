@@ -30,6 +30,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -155,7 +156,20 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 
         CoreEvents.registerEntryEventListener(m_entryEventListener);
     }
-
+    
+    final class ProjectScriptWaiter implements IProjectEventListener {
+        protected boolean end = false;
+    
+        @Override
+        public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+            HashMap<String, Object> binding = new HashMap<String, Object>();
+            binding.put("eventType", eventType);
+            ArrayList<ScriptItem> scripts = m_eventsScript.get(EventType.PROJECT_CHANGED);
+            m_scriptingWindow.executeScripts(scripts, binding);
+            end = true;
+        }
+    }
+    
     private void hookProjectEvent() {
         if (m_projectEventListener != null) {
             CoreEvents.unregisterProjectChangeListener(m_projectEventListener);
@@ -163,16 +177,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 
         addEventScripts(EventType.PROJECT_CHANGED);
 
-        m_projectEventListener = new IProjectEventListener() {
-
-            @Override
-            public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-                HashMap<String, Object> binding = new HashMap<String, Object>();
-                binding.put("eventType", eventType);
-                ArrayList<ScriptItem> scripts = m_eventsScript.get(EventType.PROJECT_CHANGED);
-                m_scriptingWindow.executeScripts(scripts, binding);
-           }
-        };
+        m_projectEventListener = new ProjectScriptWaiter();
         CoreEvents.registerProjectChangeListener(m_projectEventListener);
     }
 
@@ -272,10 +277,10 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 
     // Event listeners.
     private IEntryEventListener m_entryEventListener;
-    private IProjectEventListener m_projectEventListener;
+    protected ProjectScriptWaiter m_projectEventListener;
     private IApplicationEventListener m_applicationEventListener;
     private IEditorEventListener m_editorEventListener;
 
     // Map holding the script fired for the different event listeners.
-    private HashMap<EventType, ArrayList<ScriptItem>> m_eventsScript = new HashMap<EventType, ArrayList<ScriptItem>>();
+    private EnumMap<EventType, ArrayList<ScriptItem>> m_eventsScript = new EnumMap<EventType, ArrayList<ScriptItem>>(EventType.class);
 }

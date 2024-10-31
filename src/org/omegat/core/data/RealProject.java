@@ -89,6 +89,7 @@ import org.omegat.filters2.IFilter;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.glossary.GlossaryEntry;
 import org.omegat.gui.glossary.GlossaryReaderTSV;
+import org.omegat.gui.scripting.ScriptingWindow;
 import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.DirectoryMonitor;
@@ -688,7 +689,7 @@ public class RealProject implements IProject {
         // the repository (BUGS#1176)
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
         // CapStan-M85 : wait for events to be finished
-        while (! CoreEvents.isFinishedProjectEventLoop(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE)) {
+        while (! CoreEvents.isFinishedProjectEventLoop(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE) && ScriptingWindow.window.isScriptsLoopFinished()) {
             Thread.yield();
         }
 

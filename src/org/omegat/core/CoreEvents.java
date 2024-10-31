@@ -41,6 +41,7 @@ import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.gui.main.IMainWindow;
+import org.omegat.gui.scripting.ScriptingWindow;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 
@@ -143,7 +144,7 @@ public final class CoreEvents {
 
     /** Fire event. */
     public static void fireProjectChange(final IProjectEventListener.PROJECT_CHANGE_TYPE eventType) {
-        projEvWaiters.get(eventType).end = false; // must be done in calling thread, before starting!
+        projEvWaiters.get(eventType).end = false; ScriptingWindow.window.initScriptsLoop(); // must be done in calling thread, before starting!
         SwingUtilities.invokeLater(projEvWaiters.get(eventType));
     }
 
