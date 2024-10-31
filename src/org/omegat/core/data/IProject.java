@@ -92,6 +92,9 @@ public interface IProject {
      */
     void compileProjectAndCommit(String sourcePattern, boolean doPostProcessing, boolean commitTargetFiles)
             throws Exception;
+            
+    default void commitOnlyTargetFiles() throws Exception {
+    }
 
     /**
      * Tells whether a project is a team project

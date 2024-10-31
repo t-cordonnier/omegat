@@ -700,6 +700,20 @@ public class RealProject implements IProject {
         }
                 
         if (remoteRepositoryProvider != null && config.getTargetDir().isUnderRoot() && commitTargetFiles && isOnlineMode) {
+
+            commitOnlyTargetFiles();
+        }
+
+        if (numberOfCompiled == 1) {
+            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX_SINGULAR");
+        } else {
+            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
+        }
+
+        Log.logInfoRB("LOG_DATAENGINE_COMPILE_END");
+    }
+    
+    public void commitOnlyTargetFiles() throws IOException {
             tmxPrepared = null;
             glossaryPrepared = null;
 
@@ -735,15 +749,6 @@ public class RealProject implements IProject {
                 throw new IOException(OStrings.getString("TF_COMMIT_TARGET_ERROR") + "\n"
                         + e.getMessage());
             }
-        }
-
-        if (numberOfCompiled == 1) {
-            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX_SINGULAR");
-        } else {
-            Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
-        }
-
-        Log.logInfoRB("LOG_DATAENGINE_COMPILE_END");
     }
 
     /**

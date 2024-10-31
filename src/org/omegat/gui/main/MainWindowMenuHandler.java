@@ -213,6 +213,16 @@ public final class MainWindowMenuHandler {
 
         ProjectUICommands.projectCompileAndCommit();
     }
+    
+
+    public void projectCommitOnlyTargetFilesActionPerformed() {
+        if (!checkTags()) {
+                return;
+        }
+
+        ProjectUICommands.projectCommitTargetOnly();
+    }
+    
 
     /**
      * Commit source files
