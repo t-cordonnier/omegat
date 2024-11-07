@@ -583,7 +583,11 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                     StringBuilder b = new StringBuilder();
                     NearString cur = iter.next();
                     if ((cur.proj == null) || (cur.proj.equals(""))) {
-                        b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
+                        if (cur.key == null) {
+                            b.append(OStrings.getString("MATCHES_DEFAULT_TRA"));                        
+                        } else {
+                            b.append("<").append(cur.key.file).append(":").append(cur.key.id).append(">");
+                        }
                     } else {
                         b.append(cur.proj);
                     }
