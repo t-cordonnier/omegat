@@ -177,12 +177,18 @@ public class FindMatches {
         /* HP: includes non - word tokens */
 
         // travel by project entries, including orphaned
+        final boolean displayMatchesFromMemory = Preferences.isPreferenceDefault(Preferences.PROPAGATION_DISPLAY_MATCHES, true)
+            && (project.getProjectProperties().isSupportDefaultTranslations() ^ Preferences.isPreferenceDefault(Preferences.PROPAGATION_AUTO_DISABLED_ONLY, false));
         TMXEntry current = project.getTranslationInfo(entry);
-        //if (project.getProjectProperties().isSupportDefaultTranslations()) {
+        if (displayMatchesFromMemory || project.getProjectProperties().isSupportDefaultTranslations()) {
             project.iterateByDefaultTranslations(new DefaultTranslationsIterator() {
                 public void iterate(String source, TMXEntry trans) {
                     checkStopped(stop);
                     if (!searchExactlyTheSame && source.equals(entry.getSrcText())) {
+                        if (! displayMatchesFromMemory) {
+                            // Original (standard OmegaT) behaviour: skip original==original entry comparison
+                            return;
+                        }
                         // skip original==original entry comparison -- but only if the candidate is also default
                         if (current.defaultTranslation) {
                             return;
@@ -197,11 +203,15 @@ public class FindMatches {
                             null);
                 }
             });
-        //}
+        }
         project.iterateByMultipleTranslations(new MultipleTranslationsIterator() {
             public void iterate(EntryKey source, TMXEntry trans) {
                 checkStopped(stop);
                 if (!searchExactlyTheSame && source.sourceText.equals(entry.getSrcText())) {
+                    if (! displayMatchesFromMemory) {
+                        // Original (standard OmegaT) behaviour: skip original==original entry comparison
+                        return;
+                    }                
                     // skip original==original entry comparison -- but only if same context
                     if (source.equals(entry.getKey())) {
                         return;
