@@ -59,9 +59,11 @@ public class PropagationOptionsController extends BasePreferencesController {
     @Override
     protected void initFromPrefs() {
         panel.displayMultipleMatchesCheckBox
-                .setSelected(Preferences.isPreference(Preferences.PROPAGATION_DISPLAY_MATCHES));
+                .setSelected(Preferences.isPreferenceDefault(Preferences.PROPAGATION_DISPLAY_MATCHES, true));
         panel.autoDisabledOnlyCheckBox
                 .setSelected(Preferences.isPreference(Preferences.PROPAGATION_AUTO_DISABLED_ONLY));
+        panel.autoDisabledOnlyCheckBox
+                .setEnabled(panel.displayMultipleMatchesCheckBox.isSelected());
     }
 
     @Override

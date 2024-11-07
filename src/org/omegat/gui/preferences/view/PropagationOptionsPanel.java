@@ -56,12 +56,21 @@ public class PropagationOptionsPanel extends JPanel {
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(displayMultipleMatchesCheckBox, OStrings.getString("PREFS_PROPAGATION_VIEW_MATCHES")); // NOI18N
+        displayMultipleMatchesCheckBox.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                displayMultipleMatchesCheckBoxStateChanged(evt);
+            }
+        });
         add(displayMultipleMatchesCheckBox);
 
         org.openide.awt.Mnemonics.setLocalizedText(autoDisabledOnlyCheckBox, OStrings.getString("PREFS_PROPAGATION_AUTO_ONLY")); // NOI18N
         autoDisabledOnlyCheckBox.setMargin(new java.awt.Insets(2, 20, 2, 2));
         add(autoDisabledOnlyCheckBox);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void displayMultipleMatchesCheckBoxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_displayMultipleMatchesCheckBoxStateChanged
+        autoDisabledOnlyCheckBox.setEnabled(displayMultipleMatchesCheckBox.isSelected());
+    }//GEN-LAST:event_displayMultipleMatchesCheckBoxStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox autoDisabledOnlyCheckBox;

@@ -33,6 +33,9 @@
           <ResourceString bundle="org/omegat/Bundle.properties" key="PREFS_PROPAGATION_VIEW_MATCHES" replaceFormat="OStrings.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="displayMultipleMatchesCheckBoxStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
       </AuxValues>
