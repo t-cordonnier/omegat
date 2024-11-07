@@ -7,6 +7,7 @@
                2009 Alex Buloichik
                2012 Thomas Cordonnier
                2013-2014 Aaron Madlon-Kay
+               2024 Thomas Cordonnier
                Home page: http://www.omegat.org/
                Support center: https://omegat.org/support
 
@@ -28,12 +29,12 @@
 
 package org.omegat.core.matching;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Comparator;
 import java.util.List;
 
 import org.omegat.core.data.EntryKey;
+import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXProp;
 
@@ -63,9 +64,9 @@ public class NearString {
         this.translation = translation;
         this.comesFrom = comesFrom;
         this.fuzzyMark = fuzzyMark;
-        this.scores = new Scores[] { new Scores(nearScore, nearScoreNoStem, adjustedScore) };
+        this.score = nearScore; this.scoreNoStem = nearScoreNoStem; this.adjustedScore = adjustedScore;
         this.attr = nearData;
-        this.projs = new String[] { projName == null ? "" : projName };
+        this.proj = projName;
         this.props = props;
         this.creator = creator;
         this.creationDate = creationDate;
@@ -73,37 +74,68 @@ public class NearString {
         this.changedDate = changedDate;
     }
 
+    // Merge : build a single-chained list (only for merge, not for list!)
+    private NearString nextMerged = null; // will be filled during merging only
+
     public static NearString merge(NearString ns, final EntryKey key, final String source, final String translation,
             MATCH_SOURCE comesFrom, final boolean fuzzyMark, final int nearScore, final int nearScoreNoStem,
             final int adjustedScore, final byte[] nearData, final String projName, final String creator,
             final long creationDate, final String changer, final long changedDate, final List<TMXProp> props) {
 
-        List<String> projs = new ArrayList<>();
-        List<Scores> scores = new ArrayList<>();
-        projs.addAll(Arrays.asList(ns.projs));
-        scores.addAll(Arrays.asList(ns.scores));
+        NearString merged = new NearString(key, source, translation, comesFrom, fuzzyMark, nearScore, nearScoreNoStem,
+                adjustedScore, nearData, projName, creator, creationDate, changer, changedDate, props);
+        return merge(ns, merged);
+    }
 
-        NearString merged;
-        if (nearScore > ns.scores[0].score) {
-            merged = new NearString(key, source, translation, comesFrom, fuzzyMark, nearScore,
-                    nearScoreNoStem, adjustedScore, nearData, null, creator, creationDate, changer, changedDate, props);
-            projs.add(0, projName);
-            scores.add(0, merged.scores[0]);
-        } else {
-            merged = new NearString(ns.key, ns.source, ns.translation, ns.comesFrom, ns.fuzzyMark, nearScore,
-                    nearScoreNoStem, adjustedScore, ns.attr, null, ns.creator, ns.creationDate, ns.changer,
-                    ns.changedDate, ns.props);
-            projs.add(projName);
-            scores.add(merged.scores[0]);
+    private static NearString merge(NearString ns, NearString merged) {
+        ScoresComparator comparator = new ScoresComparator();
+        int cmp = comparator.compare(merged, ns); boolean first = cmp > 0;
+        if (cmp == 0) {
+            if (merged.proj == null) {
+                if (ns.proj != null) {
+                    first = true;
+                }
+            } else {
+                if (ns.proj == null) {
+                    first = false;
+                } else {
+                    first = merged.proj.compareTo(ns.proj) < 0;
+                }
+            }
         }
-        merged.projs = projs.toArray(new String[projs.size()]);
-        merged.scores = scores.toArray(new Scores[scores.size()]);
-        return merged;
+
+        if (first) { merged.nextMerged = ns; return merged; } // returns merged followed by ns
+        else if (ns.nextMerged == null) { ns.nextMerged = merged; return ns; }  // return ns followed my merge
+        else { ns.nextMerged = NearString.merge(ns.nextMerged, merged); return ns; }	// inserts merged inside ns.nextMerged
+    }
+    
+    public Iterator<NearString> getMergedEntries() {
+        return new Iterator<NearString>() {
+            private NearString current = NearString.this;
+            
+            public boolean hasNext() { return current.nextMerged != null; }
+            
+            public NearString next() { return current = current.nextMerged; }
+            
+        };
+    }
+    
+    public int mergedCount() {
+        int count = 1;
+        for (Iterator<NearString> iter = getMergedEntries(); iter.hasNext(); ) {
+            count = count + 1;
+            iter.next();
+        }
+        return count;
+    }
+    
+    public boolean isMerged() {
+        return nextMerged != null;
     }
 
     @Override
     public String toString() {
-        return String.join(" ", StringUtil.truncate(source, 20), scores[0].toString(), "x" + scores.length);
+        return String.join(" ", StringUtil.truncate(source, 20), scoresToString(), "x" + mergedCount());
     }
 
     public EntryKey key;
@@ -113,53 +145,47 @@ public class NearString {
 
     public boolean fuzzyMark;
 
-    public Scores[] scores;
+    public final int score;
+    /** similarity score for match without non-word tokens */
+    public final int scoreNoStem;
+    /** adjusted similarity score for match including all tokens */
+    public final int adjustedScore;
 
     /** matching attributes of near strEntry */
     public byte[] attr;
-    public String[] projs;
+    public String proj;
     public List<TMXProp> props;
     public String creator;
     public long creationDate;
     public String changer;
     public long changedDate;
 
-    public static class Scores {
-        public final int score;
-        /** similarity score for match without non-word tokens */
-        public final int scoreNoStem;
-        /** adjusted similarity score for match including all tokens */
-        public final int adjustedScore;
-
-        public Scores(int score, int scoreNoStem, int adjustedScore) {
-            this.score = score;
-            this.scoreNoStem = scoreNoStem;
-            this.adjustedScore = adjustedScore;
-        }
-
-        public String toString() {
-            StringBuilder b = new StringBuilder();
-            b.append("(");
-            b.append(score);
-            b.append("/");
-            b.append(scoreNoStem);
-            b.append("/");
-            b.append(adjustedScore);
-            b.append("%)");
-            return b.toString();
-        }
+    public String scoresToString() {
+        StringBuilder b = new StringBuilder();
+        b.append("(");
+        b.append(score);
+        b.append("/");
+        b.append(scoreNoStem);
+        b.append("/");
+        b.append(adjustedScore);
+        b.append("%)");
+        return b.toString();
     }
 
-    public static class ScoresComparator implements Comparator<Scores> {
+    public static class ScoresComparator implements Comparator<NearString> {
 
         private final SORT_KEY key;
+
+        public ScoresComparator() {
+            this.key = Preferences.getPreferenceEnumDefault(Preferences.EXT_TMX_SORT_KEY, SORT_KEY.SCORE);
+        }
 
         public ScoresComparator(SORT_KEY key) {
             this.key = key;
         }
 
         @Override
-        public int compare(Scores o1, Scores o2) {
+        public int compare(NearString o1, NearString o2) {
             int s1 = primaryScore(o1);
             int s2 = primaryScore(o2);
             if (s1 != s2) {
@@ -178,7 +204,7 @@ public class NearString {
             return 0;
         }
 
-        private int primaryScore(Scores s) {
+        private int primaryScore(NearString s) {
             switch (key) {
             case SCORE:
                 return s.score;
@@ -190,7 +216,7 @@ public class NearString {
             }
         }
 
-        private int secondaryScore(Scores s) {
+        private int secondaryScore(NearString s) {
             switch (key) {
             case SCORE:
                 return s.scoreNoStem;
@@ -202,7 +228,7 @@ public class NearString {
             }
         }
 
-        private int ternaryScore(Scores s) {
+        private int ternaryScore(NearString s) {
             switch (key) {
             case SCORE:
                 return s.adjustedScore;

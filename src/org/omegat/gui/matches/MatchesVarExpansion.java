@@ -47,6 +47,7 @@ import org.omegat.core.matching.DiffDriver.Render;
 import org.omegat.core.matching.DiffDriver.TextRun;
 import org.omegat.core.matching.NearString;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.TMXProp;
 import org.omegat.util.VarExpansion;
 
@@ -246,9 +247,9 @@ public class MatchesVarExpansion extends VarExpansion<NearString> {
                 localTemplate = localTemplate.replace(s, "");
             }
         }
-        localTemplate = localTemplate.replace(VAR_SCORE_BASE, Integer.toString(match.scores[0].score));
-        localTemplate = localTemplate.replace(VAR_SCORE_NOSTEM, Integer.toString(match.scores[0].scoreNoStem));
-        localTemplate = localTemplate.replace(VAR_SCORE_ADJUSTED, Integer.toString(match.scores[0].adjustedScore));
+        localTemplate = localTemplate.replace(VAR_SCORE_BASE, Integer.toString(match.score));
+        localTemplate = localTemplate.replace(VAR_SCORE_NOSTEM, Integer.toString(match.scoreNoStem));
+        localTemplate = localTemplate.replace(VAR_SCORE_ADJUSTED, Integer.toString(match.adjustedScore));
         localTemplate = localTemplate.replace(VAR_TARGET_TEXT, match.translation);
         localTemplate = localTemplate.replace(VAR_FUZZY_FLAG,
                 match.fuzzyMark ? (OStrings.getString("MATCHES_FUZZY_MARK") + " ") : "");
@@ -268,7 +269,15 @@ public class MatchesVarExpansion extends VarExpansion<NearString> {
 
         ProjectProperties props = Core.getProject().getProjectProperties();
         if (props != null) {
-            localTemplate = expandFileNames(localTemplate, match.projs, props.getTMRoot());
+            String proj = match.proj;
+            if ((proj == null) || (proj.length() == 0)) {
+                proj = OStrings.getString("MATCHES_THIS_PROJECT");
+            }
+            int more = match.mergedCount();
+            if (more > 1) {
+                proj += " " + StringUtil.format(OStrings.getString("MATCHES_MULTI_FILE_HINT"), more - 1);
+            }
+            localTemplate = expandFileName(localTemplate, proj, props.getTMRoot());
         }
         return localTemplate;
     }

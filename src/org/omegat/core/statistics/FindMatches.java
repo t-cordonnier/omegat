@@ -301,7 +301,7 @@ public class FindMatches {
                     List<NearString> segmentMatch = separateSegmentMatcher.search(entry, onesrc, requiresTranslation, false,
                             stop);
                     if (!segmentMatch.isEmpty()
-                            && segmentMatch.get(0).scores[0].score >= SUBSEGMENT_MATCH_THRESHOLD) {
+                            && segmentMatch.get(0).score >= SUBSEGMENT_MATCH_THRESHOLD) {
                         fsrc.add(segmentMatch.get(0).source);
                         ftrans.add(segmentMatch.get(0).translation);
                     } else {
@@ -432,12 +432,12 @@ public class FindMatches {
             return true;
         }
         NearString st = result.get(result.size() - 1);
-        int chance = Integer.compare(st.scores[0].score, simStem);
+        int chance = Integer.compare(st.score, simStem);
         if (chance == 0) {
-            chance = Integer.compare(st.scores[0].scoreNoStem, simNoStem);
+            chance = Integer.compare(st.scoreNoStem, simNoStem);
         }
         if (chance == 0) {
-            chance = Integer.compare(st.scores[0].adjustedScore, simExactly);
+            chance = Integer.compare(st.adjustedScore, simExactly);
         }
         return chance != 1;
     }
@@ -462,15 +462,15 @@ public class FindMatches {
                         changer, changedDate, tuProperties));
                 return;
             }
-            if (st.scores[0].score < similarity) {
+            if (st.score < similarity) {
                 break;
             }
-            if (st.scores[0].score == similarity) {
-                if (st.scores[0].scoreNoStem < similarityNoStem) {
+            if (st.score == similarity) {
+                if (st.scoreNoStem < similarityNoStem) {
                     break;
                 }
-                if (st.scores[0].scoreNoStem == similarityNoStem) {
-                    if (st.scores[0].adjustedScore < simAdjusted) {
+                if (st.scoreNoStem == similarityNoStem) {
+                    if (st.adjustedScore < simAdjusted) {
                         break;
                     }
                     // Patch contributed by Antonio Vilei

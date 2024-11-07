@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -199,7 +200,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         }
 
         NearString.SORT_KEY key = Preferences.getPreferenceEnumDefault(Preferences.EXT_TMX_SORT_KEY, SORT_KEY.SCORE);
-        newMatches.sort(Comparator.comparing(ns -> ns.scores[0], new ScoresComparator(key).reversed()));
+        newMatches.sort(new ScoresComparator(key).reversed());
 
         matches.addAll(newMatches);
         delimiters.add(0);
@@ -384,7 +385,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             int percentage = Preferences.getPreferenceDefault(Preferences.BEST_MATCH_MINIMAL_SIMILARITY,
                     Preferences.BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT);
             NearString thebest = matches.get(0);
-            if (thebest.scores[0].score >= percentage) {
+            if (thebest.score >= percentage) {
                 SourceTextEntry currentEntry = Core.getEditor().getCurrentEntry();
                 TMXEntry te = Core.getProject().getTranslationInfo(currentEntry);
                 if (te != null && !te.isTranslated()) {
@@ -575,19 +576,19 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         boolean hasMatches = Core.getProject().isProjectLoaded() && index >= 0 && index < matches.size();
         if (hasMatches) {
             NearString m = matches.get(index);
-            if (m.projs.length > 1) {
+            if (m.isMerged()) {
                 JMenuItem item = popup.add(OStrings.getString("MATCHES_PROJECTS"));
                 item.setEnabled(false);
-                for (int i = 0; i < m.projs.length; i++) {
-                    String proj = m.projs[i];
+                for (Iterator<NearString> iter = m.getMergedEntries(); iter.hasNext(); ) {
                     StringBuilder b = new StringBuilder();
-                    if ((proj == null) || (proj.equals(""))) {
+                    NearString cur = iter.next();
+                    if ((cur.proj == null) || (cur.proj.equals(""))) {
                         b.append(OStrings.getString("MATCHES_THIS_PROJECT"));
                     } else {
-                        b.append(proj);
+                        b.append(cur.proj);
                     }
                     b.append(" ");
-                    b.append(m.scores[i].toString());
+                    b.append(m.scoresToString());
                     JMenuItem pItem = popup.add(b.toString());
                     pItem.setEnabled(false);
                 }
@@ -627,9 +628,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
 
         if (hasMatches) {
             final NearString ns = matches.get(index);
-            String proj = ns.projs[0];
 
-            if (StringUtil.isEmpty(proj)) {
+            if (StringUtil.isEmpty(ns.proj)) {
                 item.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

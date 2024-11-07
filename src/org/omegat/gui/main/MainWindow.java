@@ -244,7 +244,7 @@ public class MainWindow extends JFrame implements IMainWindow {
 
                 if (near.comesFrom == NearString.MATCH_SOURCE.TM
                     && FileUtil.isInPath(new File(Core.getProject().getProjectProperties().getTMRoot(), "mt"),
-                    new File(near.projs[0]))) {
+                    new File(near.proj))) {
                     fromMT = true;
                 }
             }
@@ -281,7 +281,7 @@ public class MainWindow extends JFrame implements IMainWindow {
             }
             if (near.comesFrom == NearString.MATCH_SOURCE.TM
                     && FileUtil.isInPath(new File(Core.getProject().getProjectProperties().getTMRoot(), "mt"),
-                            new File(near.projs[0]))) {
+                            new File(near.proj))) {
                 Core.getEditor().replaceEditTextAndMark(translation);
             } else {
                 Core.getEditor().replaceEditText(translation);
