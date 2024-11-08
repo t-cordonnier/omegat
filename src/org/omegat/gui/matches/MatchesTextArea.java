@@ -586,7 +586,19 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                         if (cur.key == null) {
                             b.append(OStrings.getString("MATCHES_DEFAULT_TRA"));                        
                         } else {
-                            b.append("<").append(cur.key.file).append(":").append(cur.key.id).append(">");
+                            b.append("<").append(cur.key.file).append(":");
+                            if ((cur.key.id != null) && (cur.key.id.length() > 0)) {
+                                b.append(cur.key.id).append(">");
+                            } else {
+                                if ((cur.key.prev != null) && (cur.key.prev.length() > 0)) {
+                                   b.append(cur.key.prev.substring(0,9));
+                                }
+                                b.append(" ~ ");
+                                if ((cur.key.next != null) && (cur.key.next.length() > 0)) {
+                                   b.append(cur.key.next.substring(0,9));
+                                }
+                                b.append(">");
+                            }
                         }
                     } else {
                         b.append(cur.proj);
