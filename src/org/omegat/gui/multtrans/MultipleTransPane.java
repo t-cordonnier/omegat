@@ -46,7 +46,6 @@ import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.TMXEntry;
-import org.omegat.core.data.PrepareTMXEntry;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.editor.IPopupMenuConstructor;
@@ -117,21 +116,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
                 final SourceTextEntry ste = Core.getEditor().getCurrentEntry();
                 final TMXEntry curTra = Core.getProject().getTranslationInfo(ste);
                 propagate.setEnabled(curTra != null && curTra.isTranslated());
-                propagate.addActionListener(ev -> {
-                    List<SourceTextEntry> dups = ste.getDuplicates();
-                    if (dups == null) {
-                        return;
-                    }
-                    PrepareTMXEntry p = new PrepareTMXEntry(curTra);
-                    int i = 0;
-                    for (SourceTextEntry dup: dups) {
-                        Core.getProject().setTranslation(dup, p, false, curTra.linked);
-                        i = i + 1;
-                    }
-                    javax.swing.JOptionPane.showMessageDialog(null, 
-                        OStrings.getString("MULT_MENU_PROPAGATE_RES").replace("{0}", Integer.toString(i)), 
-                        OStrings.getString("MULT_MENU_PROPAGATE"), javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                });
+                propagate.addActionListener(ev -> new PropagateOptionsDialog(null).setVisible(true));
             }
         });
 
