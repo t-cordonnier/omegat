@@ -314,6 +314,26 @@ public class SegmentPropertiesArea implements IPaneMenu {
                 setTranslationProperties(trg);
             }
         }
+        String orderSpec = Preferences.getPreference(Preferences.SEGPROPS_FIELDS_ORDER);
+        if ((orderSpec != null) && (orderSpec.length() > 0)) {
+            String[] order = orderSpec.split(",");
+            for (int i = order.length - 1; i >= 0; i--) {
+                if (! order[i].equals("*")) {
+                    for (int j = 0; j < properties.size(); j += 2) {
+                        if (properties.get(j).equals(order[i])) {
+                            // invert properties[i * 2] with properties[j]
+                            String tmp = properties.get(i * 2);
+                            properties.set(i * 2, properties.get(j));
+                            properties.set(j, tmp);
+                            // invert properties[i * 2 + 1] with properties[j+1]
+                            tmp = properties.get(i * 2 + 1);
+                            properties.set(i * 2 + 1, properties.get(j + 1));
+                            properties.set(j + 1, tmp);
+                        }
+                    }
+                }
+            }
+        }
         viewImpl.update();
     }
 
