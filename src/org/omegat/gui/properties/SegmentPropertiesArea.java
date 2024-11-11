@@ -218,6 +218,22 @@ public class SegmentPropertiesArea implements IPaneMenu {
         notifyOnItem.setSelected(getKeysToNotify().contains(key));
         notifyOnItem.addActionListener(e -> setKeyToNotify(key, notifyOnItem.isSelected()));
         contextMenu.add(notifyOnItem);
+        label = StringUtil.format(OStrings.getString("SEGPROP_CONTEXTMENU_MOVETOP_PROP"),
+                displayKey);
+        final JMenuItem moveTopItem = new JMenuItem(label);
+        moveTopItem.addActionListener(e -> {
+            String pref = Preferences.getPreference(Preferences.SEGPROPS_FIELDS_ORDER);
+            if (pref == null) {
+                pref = "";
+            }
+            if (! pref.contains("*")) {
+                pref += ",*";
+            }
+            Preferences.setPreference(Preferences.SEGPROPS_FIELDS_ORDER, 
+                key + "," + pref.replace(key + ",", ""));
+        });
+        contextMenu.add(moveTopItem);
+        
     }
 
     @Override
