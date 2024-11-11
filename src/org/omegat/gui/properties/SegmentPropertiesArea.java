@@ -381,8 +381,14 @@ public class SegmentPropertiesArea implements IPaneMenu {
                     + timeFormat.format(new Date(entry.creationDate)));
         }
         setProperty(KEY_CREATOR, entry.creator);
-        if (!entry.defaultTranslation) {
-            setProperty(KEY_ISALT, true);
+        String orderSpec = Preferences.getPreference(Preferences.SEGPROPS_FIELDS_ORDER);
+        if ((orderSpec != null) && (orderSpec.contains("isAlt") || orderSpec.contains("*"))) {
+            setProperty(KEY_ISALT, !entry.defaultTranslation);
+        } else if  ((orderSpec == null) || (orderSpec.equals(""))) {
+            // original behaviour: display isAlt only if true
+            if (!entry.defaultTranslation) {
+                setProperty(KEY_ISALT, true);
+            }
         }
         setProperty(KEY_LINKED, entry.linked);
     }
