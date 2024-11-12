@@ -116,7 +116,11 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
                 final SourceTextEntry ste = Core.getEditor().getCurrentEntry();
                 final TMXEntry curTra = Core.getProject().getTranslationInfo(ste);
                 propagate.setEnabled(curTra != null && curTra.isTranslated());
-                propagate.addActionListener(ev -> new PropagateOptionsDialog(null).setVisible(true));
+                if (Preferences.isPreferenceDefault(Preferences.PROPAGATION_SEARCH_WINDOW, true)) {
+                    propagate.addActionListener(ev -> new PropagateSearchWindowController().setVisible());
+                } else {
+                    propagate.addActionListener(ev -> new PropagateOptionsDialog(null).setVisible(true));
+                }
             }
         });
 

@@ -50,6 +50,7 @@ public class PropagationOptionsPanel extends JPanel {
 
         displayMultipleMatchesCheckBox = new javax.swing.JCheckBox();
         autoDisabledOnlyCheckBox = new javax.swing.JCheckBox();
+        cbSearchWin = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setMinimumSize(new java.awt.Dimension(250, 200));
@@ -66,6 +67,10 @@ public class PropagationOptionsPanel extends JPanel {
         org.openide.awt.Mnemonics.setLocalizedText(autoDisabledOnlyCheckBox, OStrings.getString("PREFS_PROPAGATION_AUTO_ONLY")); // NOI18N
         autoDisabledOnlyCheckBox.setMargin(new java.awt.Insets(2, 20, 2, 2));
         add(autoDisabledOnlyCheckBox);
+
+        org.openide.awt.Mnemonics.setLocalizedText(cbSearchWin, OStrings.getString("PREFS_PROPAGATION_SEARCH_WIN")); // NOI18N
+        add(cbSearchWin);
+        cbSearchWin.getAccessibleContext().setAccessibleName("cbSearchWin");
     }// </editor-fold>//GEN-END:initComponents
 
     private void displayMultipleMatchesCheckBoxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_displayMultipleMatchesCheckBoxStateChanged
@@ -75,5 +80,6 @@ public class PropagationOptionsPanel extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox autoDisabledOnlyCheckBox;
     javax.swing.JCheckBox displayMultipleMatchesCheckBox;
+    javax.swing.JCheckBox cbSearchWin;
     // End of variables declaration//GEN-END:variables
 }

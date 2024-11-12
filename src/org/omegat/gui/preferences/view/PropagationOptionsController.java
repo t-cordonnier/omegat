@@ -64,6 +64,8 @@ public class PropagationOptionsController extends BasePreferencesController {
                 .setSelected(Preferences.isPreference(Preferences.PROPAGATION_AUTO_DISABLED_ONLY));
         panel.autoDisabledOnlyCheckBox
                 .setEnabled(panel.displayMultipleMatchesCheckBox.isSelected());
+        panel.cbSearchWin
+                .setSelected(Preferences.isPreferenceDefault(Preferences.PROPAGATION_SEARCH_WINDOW, true));
     }
 
     @Override
@@ -78,5 +80,7 @@ public class PropagationOptionsController extends BasePreferencesController {
                 panel.displayMultipleMatchesCheckBox.isSelected());
         Preferences.setPreference(Preferences.PROPAGATION_AUTO_DISABLED_ONLY,
                 panel.autoDisabledOnlyCheckBox.isSelected());
+        Preferences.setPreference(Preferences.PROPAGATION_SEARCH_WINDOW,
+                panel.cbSearchWin.isSelected());
     }
 }

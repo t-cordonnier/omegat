@@ -478,6 +478,7 @@ public final class Preferences {
     public static final String PROPAGATION_AUTO_DISABLED_ONLY = "propagation_auto_disabled_only";
     public static final String PROPAGATION_SELECT_DIR = "propagation_select_dir";
     public static final String PROPAGATION_SELECT_TRA_ONLY = "propagation_select_tra_only";
+    public static final String PROPAGATION_SEARCH_WINDOW = "propagation_search_window";    
     
     /** status bar progress mode */
     public static final String SB_PROGRESS_MODE = "sb_progress_mode";
