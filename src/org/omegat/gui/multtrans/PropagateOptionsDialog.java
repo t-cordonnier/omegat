@@ -77,6 +77,7 @@ public class PropagateOptionsDialog extends JDialog {
         // END HP
 
         initComponents();
+        loadPreferences();
 
         getRootPane().setDefaultButton(okButton);
 
@@ -146,9 +147,26 @@ public class PropagateOptionsDialog extends JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void loadPreferences() {
+        onlyUntranslated.setSelected(Preferences.isPreference(Preferences.PROPAGATION_SELECT_TRA_ONLY));
+        String direction = Preferences.getPreferenceDefault(Preferences.PROPAGATION_SELECT_DIR, "both");
+        rBoth.setSelected("both".equals(direction));
+        rBack.setSelected("back".equals(direction));
+        rFront.setSelected("front".equals(direction));
+    }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_okButtonActionPerformed
     {
+        Preferences.setPreference(Preferences.PROPAGATION_SELECT_TRA_ONLY, onlyUntranslated.isSelected());
+        if (rBoth.isSelected()) {
+            Preferences.setPreference(Preferences.PROPAGATION_SELECT_DIR,"both");
+        } else if (rBack.isSelected()) {
+            Preferences.setPreference(Preferences.PROPAGATION_SELECT_DIR,"back");
+        } else if (rFront.isSelected()) {
+            Preferences.setPreference(Preferences.PROPAGATION_SELECT_DIR,"front");
+        }
+    
         final SourceTextEntry ste = Core.getEditor().getCurrentEntry();
         final TMXEntry curTra = Core.getProject().getTranslationInfo(ste);
         List<SourceTextEntry> dups = ste.getDuplicates();

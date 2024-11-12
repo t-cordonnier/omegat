@@ -473,6 +473,10 @@ public final class Preferences {
     public static final String AC_HISTORY_COMPLETION_ENABLED = "allow_history_completer";
     public static final String AC_HISTORY_PREDICTION_ENABLED = "history_completer_prediction_enabled";
 
+    /** Manual propagation **/
+    public static final String PROPAGATION_SELECT_DIR = "propagation_select_dir";
+    public static final String PROPAGATION_SELECT_TRA_ONLY = "propagation_select_tra_only";
+    
     /** status bar progress mode */
     public static final String SB_PROGRESS_MODE = "sb_progress_mode";
 
