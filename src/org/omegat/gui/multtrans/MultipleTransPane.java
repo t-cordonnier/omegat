@@ -45,6 +45,7 @@ import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.editor.IPopupMenuConstructor;
@@ -111,6 +112,11 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
                         }
                     });
                 }
+                JMenuItem propagate = menu.add(OStrings.getString("MULT_MENU_PROPAGATE"));
+                final SourceTextEntry ste = Core.getEditor().getCurrentEntry();
+                final TMXEntry curTra = Core.getProject().getTranslationInfo(ste);
+                propagate.setEnabled(curTra != null && curTra.isTranslated());
+                propagate.addActionListener(ev -> new PropagateOptionsDialog(null).setVisible(true));
             }
         });
 

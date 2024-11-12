@@ -476,6 +476,8 @@ public final class Preferences {
     /** Manual propagation **/
     public static final String PROPAGATION_DISPLAY_MATCHES = "propagation_display_matches";
     public static final String PROPAGATION_AUTO_DISABLED_ONLY = "propagation_auto_disabled_only";
+    public static final String PROPAGATION_SELECT_DIR = "propagation_select_dir";
+    public static final String PROPAGATION_SELECT_TRA_ONLY = "propagation_select_tra_only";
     
     /** status bar progress mode */
     public static final String SB_PROGRESS_MODE = "sb_progress_mode";
