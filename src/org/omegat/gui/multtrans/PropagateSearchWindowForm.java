@@ -181,7 +181,6 @@ public class PropagateSearchWindowForm extends javax.swing.JFrame {
         jPanel7.add(filler16);
 
         org.openide.awt.Mnemonics.setLocalizedText(m_filterButton, OStrings.getString("BUTTON_FILTER")); // NOI18N
-        m_filterButton.setEnabled(false);
         jPanel7.add(m_filterButton);
         jPanel7.add(filler1);
 

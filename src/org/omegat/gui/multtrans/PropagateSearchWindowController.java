@@ -67,7 +67,7 @@ import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.IEditor.CaretPosition;
 import org.omegat.gui.editor.IEditorFilter;
 import org.omegat.gui.editor.filter.ReplaceFilter;
-import org.omegat.gui.editor.filter.SearchFilter;
+import org.omegat.gui.editor.filter.PropagateFilter;
 import org.omegat.util.Java8Compat;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -94,11 +94,13 @@ public class PropagateSearchWindowController {
     private final PropagateSearchWindowForm form;
     private final int initialEntry;
     private final CaretPosition initialCaret;
+    private final PrepareTMXEntry curTra;
 
-    public PropagateSearchWindowController() {
+    public PropagateSearchWindowController(PrepareTMXEntry curTra) {
         form = new PropagateSearchWindowForm();
         initialEntry = Core.getEditor().getCurrentEntryNumber();
         initialCaret = getCurrentPositionInEntryTranslationInEditor(Core.getEditor());
+        this.curTra = curTra;
 
         if (Platform.isMacOSX()) {
             OSXIntegration.enableFullScreen(form);
@@ -191,7 +193,7 @@ public class PropagateSearchWindowController {
     private void doFilter() {
         PropagateEntryListPane viewer = (PropagateEntryListPane) form.m_viewer;
         Core.getEditor().commitAndLeave(); // Otherwise, the current segment being edited is lost
-        Core.getEditor().setFilter(new SearchFilter(viewer.getEntryList()));
+        Core.getEditor().setFilter(new PropagateFilter(viewer.getEntryList(), curTra));
     }
 
     private void doSearch() {

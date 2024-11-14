@@ -44,4 +44,10 @@ public interface IEditorFilter {
      * behavior settings.
      */
     boolean isSourceAsEmptyTranslation();
+    
+    /** If true, display other segments in a non-editable way **/
+    default boolean displayOtherSegments() {
+        return false;
+    }
+    
 }

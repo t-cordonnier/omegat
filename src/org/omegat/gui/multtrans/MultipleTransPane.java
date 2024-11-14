@@ -46,6 +46,7 @@ import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.TMXEntry;
+import org.omegat.core.data.PrepareTMXEntry;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.editor.IPopupMenuConstructor;
@@ -117,7 +118,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
                 final TMXEntry curTra = Core.getProject().getTranslationInfo(ste);
                 propagate.setEnabled(curTra != null && curTra.isTranslated());
                 if (Preferences.isPreferenceDefault(Preferences.PROPAGATION_SEARCH_WINDOW, true)) {
-                    propagate.addActionListener(ev -> new PropagateSearchWindowController().setVisible());
+                    propagate.addActionListener(ev -> new PropagateSearchWindowController(new PrepareTMXEntry(curTra)).setVisible());
                 } else {
                     propagate.addActionListener(ev -> new PropagateOptionsDialog(null).setVisible(true));
                 }
