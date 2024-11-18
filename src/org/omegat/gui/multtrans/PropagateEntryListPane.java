@@ -56,6 +56,7 @@ import javax.swing.text.StyledDocument;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.matching.DiffDriver;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.IEditor.CaretPosition;
 import org.omegat.gui.editor.IEditorFilter;
@@ -89,6 +90,10 @@ class PropagateEntryListPane extends JTextPane {
     private static final String KEY_JUMP_TO_ENTRY_IN_EDITOR = "jumpToEntryInEditor";
     private static final int ENTRY_LIST_INDEX_NO_ENTRIES  = -1;
     private static final int ENTRY_LIST_INDEX_END_OF_TEXT = -2;
+    private static final AttributeSet ATTRIBUTES_DELETED = Styles.createAttributeSet(
+            Styles.EditorColor.COLOR_MATCHES_DEL_ACTIVE.getColor(), null, true, null, true, null);
+    private static final AttributeSet ATTRIBUTES_INSERTED = Styles.createAttributeSet(
+            Styles.EditorColor.COLOR_MATCHES_INS_ACTIVE.getColor(), null, true, null, null, true);
 
     private static void bindKeyStrokesFromMainMenuShortcuts(InputMap map) {
         // Add KeyStrokes Ctrl+N/P (Cmd+N/P for MacOS) to the map
@@ -249,6 +254,7 @@ class PropagateEntryListPane extends JTextPane {
 
     protected class DisplayMatches {
         private final List<SourceTextEntry> matches = new ArrayList<SourceTextEntry>();
+        private final Map<Integer, List<DiffDriver.TextRun>> format = new HashMap<>();
 
         public DisplayMatches(final List<SourceTextEntry> entries) {
             UIThreadsUtil.mustBeSwingThread();
@@ -276,6 +282,10 @@ class PropagateEntryListPane extends JTextPane {
             } catch (Exception ex) {
                 Log.log(ex);
             }
+            
+            if (!entries.isEmpty()) {
+                SwingUtilities.invokeLater(this::doMarks);
+            }            
         }
 
         // add entry text - remember what its number is and where it ends
@@ -297,9 +307,37 @@ class PropagateEntryListPane extends JTextPane {
             if (ste.getKey().next != null) {
                 stringBuf.append(OStrings.getString("SEGPROP_KEY_NEXT")).append(": ").append(ste.getKey().next).append("\n");            
             }
+            org.omegat.core.data.TMXEntry tra = Core.getProject().getTranslationInfo(ste);
+            String traText = tra.isTranslated() ? tra.translation : "";
+            String curTra = Core.getProject().getTranslationInfo(Core.getEditor().getCurrentEntry()).translation;
+            DiffDriver.Render diffRender = DiffDriver.render(traText, curTra, true);
+            if (diffRender.text != null) {
+                format.put(stringBuf.length(), diffRender.formatting);
+                stringBuf.append(diffRender.text);
+            }
+            stringBuf.append("\n\n");
             
             entryList.add(ste.entryNum());
             offsetList.add(stringBuf.length());
+        }
+            
+        public void doMarks() {
+            UIThreadsUtil.mustBeSwingThread();
+            StyledDocument doc = (StyledDocument) getDocument();
+            for (Map.Entry<Integer, List<DiffDriver.TextRun>> e : format.entrySet()) {
+                for (DiffDriver.TextRun r : e.getValue()) {
+                    switch (r.type) {
+                    case DELETE:
+                        doc.setCharacterAttributes(e.getKey() + r.start, r.length, ATTRIBUTES_DELETED, false);
+                        break;
+                    case INSERT:
+                        doc.setCharacterAttributes(e.getKey() + r.start, r.length, ATTRIBUTES_INSERTED, false);
+                        break;
+                    case NOCHANGE:
+                        // Nothing
+                    }                
+                }
+            }
         }
     }
 
