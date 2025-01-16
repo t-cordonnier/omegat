@@ -687,8 +687,15 @@ public class RealProject implements IProject {
         // repository to be able to modify the resulting files before sending them to
         // the repository (BUGS#1176)
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.COMPILE);
-        while (org.omegat.gui.scripting.ScriptingWindow.window.inEventsLoop > 0) {
-            Thread.yield();
+        // Wait a second then see if there are (still) scripts running in the background.
+        // Prevent deadlocks.
+        int maxIterations = 60;
+        do {
+            Thread.sleep(1000);
+            maxIterations--;
+        } while (org.omegat.gui.scripting.ScriptingWindow.window.inEventsLoop > 0 && maxIterations > 0);
+        if (maxIterations <= 0) {
+            Log.log(new Exception("Timed out waiting for user scripts to finish after compile, continuing anyway"));
         }
 
         if (doPostProcessing) {
