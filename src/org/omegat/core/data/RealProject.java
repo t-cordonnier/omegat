@@ -690,7 +690,7 @@ public class RealProject implements IProject {
         while (CoreEvents.isInProjectEventLoop) {
             Thread.yield();
         }
-        while (org.omegat.gui.scripting.ScriptingWindow.window.inEventsLoop > 0) {
+        while (org.omegat.gui.scripting.ScriptingWindow.inEventsLoop > 0) {
             Thread.yield();
         }
 

@@ -588,7 +588,7 @@ public class ScriptingWindow {
         executeScripts(Arrays.asList(scriptItem), bindings, cancelQueue);
     }
     
-    public int inEventsLoop = 0;
+    public static int inEventsLoop = 0;
 
     /**
      * Execute scripts sequentially to make sure they don't interrupt each
