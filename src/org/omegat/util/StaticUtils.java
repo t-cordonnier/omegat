@@ -169,6 +169,18 @@ public final class StaticUtils {
         }
         return installDir;
     }
+    
+    private static final List<String> toRemove = new ArrayList<>();
+    static {
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(StaticUtils.class.getResourceAsStream("to_remove.txt")))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                toRemove.add("scripts/" + line.replace("\r","").replace("\n",""));
+            }
+        } catch (IOException io) {
+            io.printStackTrace();
+        }
+    }
 
     /**
      * Returns the location of the configuration directory, depending on the
@@ -301,8 +313,11 @@ public final class StaticUtils {
                                 if (confRel.getParentFile() != null) {
                                     new File(configDir + confRel.getParentFile().toString()).mkdirs();
                                 }
-                                if (conf.getName().toLowerCase().startsWith("pisa")) {
-                                    Log.log("Import " + conf + " from standard OmegaT configuration (MOVE)");
+                                if (toRemove.contains(confRel.toString()) || toRemove.contains(confRel.toString().replace("\\","/"))) {
+                                    Log.log("Import script " + conf + " from standard OmegaT configuration (MOVE)");
+                                    Files.move(conf.toPath(), new File(configDir + File.separator + confRel.toString()).toPath());
+                                } else if (conf.getName().toLowerCase().startsWith("pisa")) {
+                                    Log.log("Import (pisa) " + conf + " from standard OmegaT configuration (MOVE)");
                                     Files.move(conf.toPath(), new File(configDir + File.separator + confRel.toString()).toPath());
                                 } else if (conf.getName().equals("omegat.prefs")) {
                                     PreferencesXML xml = new PreferencesXML(conf, new File(configDir + File.separator + confRel.toString()));
