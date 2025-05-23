@@ -316,9 +316,6 @@ public final class StaticUtils {
                                 if (toRemove.contains(confRel.toString()) || toRemove.contains(confRel.toString().replace("\\","/"))) {
                                     Log.log("Import script " + conf + " from standard OmegaT configuration (MOVE)");
                                     Files.move(conf.toPath(), new File(configDir + File.separator + confRel.toString()).toPath());
-                                } else if (conf.getName().toLowerCase().startsWith("pisa")) {
-                                    Log.log("Import (pisa) " + conf + " from standard OmegaT configuration (MOVE)");
-                                    Files.move(conf.toPath(), new File(configDir + File.separator + confRel.toString()).toPath());
                                 } else if (conf.getName().equals("omegat.prefs")) {
                                     PreferencesXML xml = new PreferencesXML(conf, new File(configDir + File.separator + confRel.toString()));
                                     List<String> keys = new ArrayList<>(), values = new ArrayList<>(); xml.load(keys, values);
