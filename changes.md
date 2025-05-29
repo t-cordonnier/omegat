@@ -1,11 +1,11 @@
 # OmegaT -- cApStAn build
 
-## Version 5.7.4_Beta (911305e31) -- internal release
+## Version 5.7.4
 
-* Option to block target file creation also kicked when closing project
 * M68: Bugfix for unexpected auto-population behaviour
 * M85: Wait for post-processing scripts to finish before compile
 * M85: Patch to add a second option to commit target files without re-creating them
+* M96: Custom configuration folder, new vendor property in preferences, etc.
 
 ## Version 5.7.3_0 (57b1bb571)
 

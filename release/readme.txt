@@ -1,13 +1,70 @@
-﻿@TRANSLATION_NOTICE@
+﻿cApStAn's OmegaT
+================
+
+OmegaT is a free and open source multiplatform CAT tool.
+
+This repository is a fork of the 
+original community OmegaT project. This fork (and more specifically the [main-capstan](https://github.com/capstanlqc/omegat/tree/main-capstan) branch) is meant to create a custom build
+to be used in projects where [cApStAn](https://www.capstan.be/) participates. That 
+custom build deviates from the community version in a number of important ways
+ as required to accommodate different needs of cApStAn projects.
+
+> [!WARNING]  
+> It is very likely that this repository is not what you're looking for. This repository is kept public for transparency purposes but is only meant for internal use by cApStAn.
+
+Intended users of cApStAn's derivative version of OmegaT don't need this repo and will find the information they need in cApStAn's [OmegaT guides](https://capstanlqc.github.io/omegat-guides). If you are not involved in a cApStAn project and were looking for the community/standard OmegaT version, please refer to the official [OmegaT website](https://omegat.org/).
+
+Disclaimer
+==========
+
+This is derivative work used to build OmegaT installers for the exclusive use of cApStAn
+ subcontractors or by linguists participating in projects where cApStAn provides
+ support in terms of translation technology. 
+
+> [!CAUTION]
+> The customized version of OmegaT one may build with this code base deliberately
+ uses a custom configuration folder that is different from the one used by the community version of OmegaT. You may experience configuration incompatibility problems if you use 
+ the two versions and try to use the same configuration folder with both. Do not do that unless you really know what you're doing.
+
+Do not use this version of OmegaT if you are not participating in a project where cApStAn
+ provides support and where you have been trained by cApStAn and/or received 
+ instructions to use these [guides](https://capstanlqc.github.io/omegat-guides), e.g. if you're an independent translator intending to prepare your own
+ projects for your own clients and.
 
 
-What is OmegaT?
-===============
 
-OmegaT is a free and open source multiplatform Computer Assisted Translation
-tool with fuzzy matching, translation memory, keyword search, glossaries, and
-translation leveraging into updated projects.
+Installation
+============
 
+Please follow cApStAn's [setup guide](https://capstanlqc.github.io/omegat-guides/en/translation/install-and-setup/) 
+to have this version of OmegaT installed in your computer.
+
+> [!WARNING]  
+> This custom version of OmegaT uses a custom configuration folder to avoid 
+conflicts with the default configuration folder used by standard OmegaT. If you have 
+customized an existing installation of OmegaT (or the desktop shortcut used to
+ launch it) in order to use a different configuration folder, then this version 
+ of OmegaT might not work correctly and your deliverables might contain technical
+  glitches or not be usable at all. 
+> 
+> We strongly recommend that you don't tweak the configuration folder path, but if you really need to do that, please contact cApStAn's Helpdesk and we'll try to help you with that without risks.
+
+
+Helpdesk
+========
+
+If you're a cApStAn subcontractor or a translator participating in a project where cApStAn
+ provides support and you need help with this version of OmegaT (e.g. because you have an issue 
+ or a quesiton or you're stuck), please write a ticket in cApStAn's OmegaT Helpdesk and you will
+ get support there.
+
+> [!IMPORTANT]  
+> In such a case, please do not seek help in the community of mainstream OmegaT users 
+or in any of their support channels. 
+
+You should have received information about cApStAn's OmegaT Helpdesk but if you have not
+or are not sure where to find our Helpdesk, please ask your project manager and they will point you 
+in the right direction. 
 
 
 Licensing information
@@ -20,193 +77,3 @@ published by the Free Software Foundation, either version 3 of the License, or
 
 OmegaT uses a number of librairies. The license of each library is mentioned in
 /lib/licenses/Licenses.txt.
-
-
-
-Prerequisites for installing OmegaT
-===================================
-
-OmegaT requires the Java Runtime Environment (JRE) version 1.8 or higher to be
-installed on your system.
-
-We recommend using OmegaT packages that include the JRE, to save you the trouble
-of selecting, obtaining and installing it.
-
-
-
-Installing OmegaT (Windows)
-===========================
-
-Launch the installation program.
-
-
-
-Installing OmegaT (Mac)
-=======================
-
-Unpack the OmegaT .zip archive to obtain a folder that contains a documentation
-file and the OmegaT application. Move the folder to an appropriate location such
-as the Applications folder.
-
-
-
-Installing OmegaT (Linux)
-=========================
-
-Place the archive in any suitable folder and unpack it. OmegaT is then ready to
-be launched.
-
-You can however obtain a neater and more user-friendly installation by using the
-installation script (linux-install.sh). To use this script, open a terminal
-window (console), change folder to the folder containing OmegaT.jar and the
-linux-install.sh script, and execute the script with ./linux-install.sh.
-
-
-
-Installing OmegaT (Solaris, FreeBSD, etc.)
-=========================================
-
-Place the archive in any suitable folder and unpack it. OmegaT is then ready to
-be launched.
-
-
-
-Using Java Web Start for installing OmegaT (all platforms)
-===========================================================
-
-If you have already Java installed on your system, one way to install OmegaT is
-to use Java Web Start.
-
-For this purpose download the following file and then execute it:
-
-  https://omegat.sourceforge.net/webstart/OmegaT.jnlp
-
-It will install the correct environment for your computer and the application
-itself on the first run. Later calls do not need to be online.
-
-
-
-Launching OmegaT (Windows)
-==========================
-
-If, during installation, you have created a shortcut on the desktop,
-double-click on that shortcut.
-
-The installer can create shortcuts for you in the start menu, on the desktop and
-in the quick launch area. You can also manually drag the file OmegaT.exe to the
-start menu, the desktop or the quick launch area to link it from there.
-
-If you can see the file OmegaT but not OmegaT.exe in your File Manager (Windows
-Explorer), change the settings so that file extensions are displayed.
-
-
-
-Launching OmegaT (Mac)
-======================
-
-Double-click on the OmegaT application.
-
-You may drag the OmegaT application to your dock or to the toolbar of a Finder
-window to be able to launch it from any location. You can also launch it from
-the Spotlight search field.
-
-
-
-Launching OmegaT (Linux)
-========================
-
-If you used linux-install.sh script, you should be able to launch OmegaT with:
-
-    Alt+F2
-
-and then:
-
-    omegat
-
-For a more user-friendly way of launching OmegaT, you can use the Kaptain script
-provided (omegat.kaptn). To use this script you must first install Kaptain. You
-can then launch the Kaptain launch script with:
-
-    Alt+F2
-
-and then:
-
-    omegat.kaptn
-
-
-
-Launching OmegaT from the command line (all systems)
-====================================================
-
-The command to launch OmegaT is:
-
-    cd <folder where the file OmegaT.jar is located>
-
-    <name and path of the Java executable file> -jar OmegaT.jar
-
-(The Java executable file is the file java on Linux and java.exe on Windows.  If
-Java is installed at system level and is in the command path, the full path need
-not be entered.)
-
-
-
-Contributors
-============
-
-OmegaT is the original work of Keith Godfrey.
-
-Aaron Madlon-Kay is the OmegaT project manager.
-
-Current team:
-(alphabetical order)
-
-- Vincent Bidaux (documentation manager)
-- Marco Cevoli (Telegram community manager)
-- Jean-Christophe Helary (Twitter community manager)
-- Kos Ivantsof (localisation manager)
-- Concepción Martin (Facebook community manager)
-- Briac Pilpré (webmaster)
-- Lucie Vecerova (Facebook community manager)
-
-Contributions to the code are documented in /docs/contributors.txt.
-
-Previous contributors include:
-(alphabetical order)
-
-- Anthony Baldwin (localisation manager)
-- Didier Briel (project manager)
-- Alex Buloichik (lead developer)
-- Sabine Cretella
-- Dmitri Gabinski
-- Jean-Christophe Helary (support group owner, localisation manager)
-- Maxym Mykhalchuk (lead developer)
-- Samuel Murray
-- Henry Pijffers (release manager)
-- Marc Prior (project co-ordinator, webmaster)
-- Vito Smolej (documentation manager)
-
-and many, many more very helpful people
-
-(If you think you have significantly contributed to the OmegaT Project but you
-don't see your name on the lists, feel free to contact us.)
-
-
-
-Useful links
-============
-
-The most current info about OmegaT can be found at:
-
-  https://omegat.org/
-
-User support resources:
-
-  https://omegat.org/support
-
-Requests for Enhancements (in English), at the SourceForge site:
-
-  https://sourceforge.net/p/omegat/feature-requests/
-
-Bug reports (in English), at the SourceForge site:
-
-  https://sourceforge.net/p/omegat/bugs/
