@@ -77,3 +77,11 @@ published by the Free Software Foundation, either version 3 of the License, or
 
 OmegaT uses a number of librairies. The license of each library is mentioned in
 /lib/licenses/Licenses.txt.
+
+
+Acknowledgements
+================
+
+cApStAn's custom build of OmegaT would not be possible without the incredible efforts of the open-source community behind the OmegaT project. Our deepest gratitude goes to all the contributors, maintainers and volunteers who dedicated their time, expertise and passion to building and refining the community version of OmegaT, on which this derivative work is based.
+
+Special thanks go to the people who worked on developments sponsored by cApStAn since 2016 in either OmegaT or Okapi tools: [Didier Briel](https://www.linkedin.com/in/didier-briel-322255/), [Alexander Buloichik](https://github.com/AlexanderBuloichik), [Aaron Madlon-Kay](https://github.com/amake), [Briac Pilpré](https://github.com/briacp), [Thomas Cordonnier](https://github.com/t-cordonnier), [Denis Konovalyenko](https://github.com/denis-konovalyenko) as well as [Kos Ivantsov](https://github.com/kosivantsov) and [Gergely Zayzon](https://github.com/gergoe). Other people might not have actually written code and are not mentioned here but were equally helpful with tips, suggestions, critical reviews of specs, etc.
