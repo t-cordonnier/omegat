@@ -7,7 +7,7 @@ AppId=org.omegat
 AppPublisher=OmegaT
 AppPublisherURL=https://omegat.org/
 DefaultDirName={autopf}\OmegaT
-DefaultGroupName=OmegaT
+DefaultGroupName=OmegaT-cApStAn
 DisableDirPage=no
 UninstallDisplayIcon={app}\OmegaT.exe
 AllowNoIcons=yes
@@ -32,38 +32,38 @@ Source: "OmegaT.jar"; DestDir: "{app}"
 Source: "OmegaT-license.txt"; DestDir: "{app}"
 Source: "doc-license.txt"; DestDir: "{app}"
 Source: "readme.txt"; DestDir: "{app}"; Flags: isreadme;
-Source: "readme_ar.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ar
-Source: "readme_ca.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ca
-Source: "readme_cs.txt"; DestDir: "{app}"; Flags: isreadme; Languages: cs
-Source: "readme_co.txt"; DestDir: "{app}"; Flags: isreadme; Languages: co
+;Source: "readme_ar.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ar
+;Source: "readme_ca.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ca
+;Source: "readme_cs.txt"; DestDir: "{app}"; Flags: isreadme; Languages: cs
+;Source: "readme_co.txt"; DestDir: "{app}"; Flags: isreadme; Languages: co
 ;Source: "readme_cy.txt"; DestDir: "{app}"; Flags: isreadme; Languages: cy
-Source: "readme_da.txt"; DestDir: "{app}"; Flags: isreadme; Languages: da
-Source: "readme_de.txt"; DestDir: "{app}"; Flags: isreadme; Languages: de
-Source: "readme_es.txt"; DestDir: "{app}"; Flags: isreadme; Languages: es
-Source: "readme_eu.txt"; DestDir: "{app}"; Flags: isreadme; Languages: eu
-Source: "readme_fi.txt"; DestDir: "{app}"; Flags: isreadme; Languages: fi
-Source: "readme_fr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: fr
-Source: "readme_gl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: gl
-Source: "readme_hr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: hr
-Source: "readme_hu.txt"; DestDir: "{app}"; Flags: isreadme; Languages: hu
+;Source: "readme_da.txt"; DestDir: "{app}"; Flags: isreadme; Languages: da
+;Source: "readme_de.txt"; DestDir: "{app}"; Flags: isreadme; Languages: de
+;Source: "readme_es.txt"; DestDir: "{app}"; Flags: isreadme; Languages: es
+;Source: "readme_eu.txt"; DestDir: "{app}"; Flags: isreadme; Languages: eu
+;Source: "readme_fi.txt"; DestDir: "{app}"; Flags: isreadme; Languages: fi
+;Source: "readme_fr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: fr
+;Source: "readme_gl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: gl
+;Source: "readme_hr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: hr
+;Source: "readme_hu.txt"; DestDir: "{app}"; Flags: isreadme; Languages: hu
 ;Source: "readme_id.txt"; DestDir: "{app}"; Flags: isreadme; Languages: id
-Source: "readme_it.txt"; DestDir: "{app}"; Flags: isreadme; Languages: it
-Source: "readme_ja.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ja
-Source: "readme_ko.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ko
-Source: "readme_nl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: nl
-Source: "readme_no.txt"; DestDir: "{app}"; Flags: isreadme; Languages: no
-Source: "readme_pl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: pl
-Source: "readme_pt_BR.txt"; DestDir: "{app}"; Flags: isreadme; Languages: pt_BR
-Source: "readme_ru.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ru
+;Source: "readme_it.txt"; DestDir: "{app}"; Flags: isreadme; Languages: it
+;Source: "readme_ja.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ja
+;Source: "readme_ko.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ko
+;Source: "readme_nl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: nl
+;Source: "readme_no.txt"; DestDir: "{app}"; Flags: isreadme; Languages: no
+;Source: "readme_pl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: pl
+;Source: "readme_pt_BR.txt"; DestDir: "{app}"; Flags: isreadme; Languages: pt_BR
+;Source: "readme_ru.txt"; DestDir: "{app}"; Flags: isreadme; Languages: ru
 ;Source: "readme_sh.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sh
-Source: "readme_sk.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sk
-Source: "readme_sl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sl
-Source: "readme_sq.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sq
-Source: "readme_sv.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sv
-Source: "readme_tr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: tr
-Source: "readme_uk.txt"; DestDir: "{app}"; Flags: isreadme; Languages: uk
-Source: "readme_zh_CN.txt"; DestDir: "{app}"; Flags: isreadme; Languages: zh_CN
-Source: "readme_zh_TW.txt"; DestDir: "{app}"; Flags: isreadme; Languages: zh_TW
+;Source: "readme_sk.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sk
+;Source: "readme_sl.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sl
+;Source: "readme_sq.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sq
+;Source: "readme_sv.txt"; DestDir: "{app}"; Flags: isreadme; Languages: sv
+;Source: "readme_tr.txt"; DestDir: "{app}"; Flags: isreadme; Languages: tr
+;Source: "readme_uk.txt"; DestDir: "{app}"; Flags: isreadme; Languages: uk
+;Source: "readme_zh_CN.txt"; DestDir: "{app}"; Flags: isreadme; Languages: zh_CN
+;Source: "readme_zh_TW.txt"; DestDir: "{app}"; Flags: isreadme; Languages: zh_TW
 Source: "readme*.txt"; DestDir: "{app}";
 Source: "join.html"; DestDir: "{app}"
 Source: "index.html"; DestDir: "{app}"
@@ -82,8 +82,8 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Icons]
 Name: "{group}\OmegaT"; Filename: "{app}\OmegaT.exe"; WorkingDir: "{app}"
-Name: "{userdesktop}\OmegaT"; Filename: "{app}\OmegaT.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\OmegaT"; Filename: "{app}\OmegaT.exe"; Tasks: quicklaunchicon
+Name: "{userdesktop}\OmegaT-cApStAn"; Filename: "{app}\OmegaT.exe"; Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\OmegaT-cApStAn"; Filename: "{app}\OmegaT.exe"; Tasks: quicklaunchicon
 Name: "{group}\OmegaT Readme"; Filename: "{app}\readme.txt"
 Name: "{group}\OmegaT User Manual"; Filename: "{app}\docs\index.html"
 Name: "{group}\Join OmegaT Mailing List"; Filename: "{app}\join.html"
