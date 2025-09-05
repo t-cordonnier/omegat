@@ -26,6 +26,7 @@
 package org.omegat.core.tagvalidation;
 
 import java.util.List;
+import java.io.Writer;
 
 import org.omegat.core.data.SourceTextEntry;
 
@@ -71,4 +72,13 @@ public interface ITagValidation {
      *            method)
      */
     void logTagValidationErrors(List<ErrorReport> invalidTagsEntries);
+    
+    /**
+     * Log invalid tags entries to json file.
+     *
+     * @param invalidTagsEntries
+     *            list of invalid tags entries(from {@link #listInvalidTags()}
+     *            method)
+     */
+    void jsonLogTagValidationErrors(Writer writer, List<ErrorReport> invalidTagsEntries);    
 }

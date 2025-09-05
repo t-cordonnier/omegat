@@ -27,6 +27,8 @@
 
 package org.omegat.core.tagvalidation;
 
+import java.io.Writer;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +79,36 @@ public class TagValidationTool implements ITagValidation {
         }
     }
 
+
+    @Override
+    public synchronized void jsonLogTagValidationErrors(Writer writer, List<ErrorReport> suspects) {
+        try {
+            writer.write("[\n");    
+            if (suspects != null && !suspects.isEmpty()) {
+                for (ErrorReport report : suspects) {
+                    writer.write("\t{\n");
+                    writer.write("\t\t\"entryNum\": " + report.entryNum + ",\n");
+                    writer.write("\t\t\"source\": \"" + report.source + "\",\n");
+                    writer.write("\t\t\"target\": \"" + report.translation + "\",\n");
+                    writer.write("\t\t\"errors\": [\n");
+                    for (Map.Entry<TagError, List<Tag>> e : report.inverseReport().entrySet()) {
+                        writer.write("\t\t\t{ ");
+                        writer.write("\"" + e.getKey() + "\": [");
+                        for (Tag tag : e.getValue()) {
+                            writer.write("\"" + tag + "\", ");
+                        }
+                        writer.write("] }, ");
+                    }
+                    writer.write("\n\t\t]\n");
+                    writer.write("\t},\n");
+                }
+            }
+            writer.write("]\n");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     /**
      * Scans project and builds the list of entries which are suspected of
      * having changed (possibly invalid) tag structures.

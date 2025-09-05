@@ -545,8 +545,12 @@ public class IssuesPanelController implements IIssues {
         @Override
         protected List<IIssue> doInBackground() throws Exception {
             long start = System.currentTimeMillis();
-            Stream<IIssue> tagErrors = Core.getTagValidation().listInvalidTags(filePattern).stream()
-                    .map(TagIssue::new);
+            List<org.omegat.core.tagvalidation.ErrorReport> tagOnlyErrors = Core.getTagValidation().listInvalidTags(filePattern);
+            try (java.io.Writer writer = new java.io.OutputStreamWriter(new java.io.FileOutputStream(
+                Core.getProject().getProjectProperties().getProjectRootDir() + java.io.File.separator + "tag-errors-report.json"))) {
+                Core.getTagValidation().jsonLogTagValidationErrors(writer, tagOnlyErrors);
+            }
+            Stream<IIssue> tagErrors = tagOnlyErrors.stream().map(TagIssue::new);
             List<IIssueProvider> providers = IssueProviders.getEnabledProviders();
             Stream<IIssue> providerIssues = Core.getProject().getAllEntries().parallelStream()
                     .filter(StreamUtil.patternFilter(filePattern, ste -> ste.getKey().file))
