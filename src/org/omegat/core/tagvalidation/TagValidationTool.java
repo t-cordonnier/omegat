@@ -90,16 +90,15 @@ public class TagValidationTool implements ITagValidation {
                     writer.write("\t\t\"entryNum\": " + report.entryNum + ",\n");
                     writer.write("\t\t\"source\": \"" + report.source + "\",\n");
                     writer.write("\t\t\"target\": \"" + report.translation + "\",\n");
-                    writer.write("\t\t\"errors\": [\n");
+                    writer.write("\t\t\"errors\": {\n");
                     for (Map.Entry<TagError, List<Tag>> e : report.inverseReport().entrySet()) {
-                        writer.write("\t\t\t{ ");
-                        writer.write("\"" + e.getKey() + "\": [");
+                        writer.write("\t\t\t\"" + e.getKey() + "\": [\n");
                         for (Tag tag : e.getValue()) {
-                            writer.write("\"" + tag + "\", ");
+                            writer.write("\t\t\t\t" + tag.toJson() + ", \n");
                         }
-                        writer.write("] }, ");
+                        writer.write("\t\t\t], ");
                     }
-                    writer.write("\n\t\t]\n");
+                    writer.write("\n\t\t}\n");
                     writer.write("\t},\n");
                 }
             }

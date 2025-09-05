@@ -147,6 +147,10 @@ public final class TagUtil {
         public String toString() {
             return tag + "@" + pos;
         }
+        
+        public String toJson() {
+            return "{ \"name\": \"" + getName() + "\", \"type\": \"" + getType() + "\", \"position\": " + pos + " }";
+        }
     }
 
     /**
