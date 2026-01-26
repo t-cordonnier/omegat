@@ -319,6 +319,9 @@ public final class StaticUtils {
                                 } else if (conf.getName().equals("omegat.prefs")) {
                                     PreferencesXML xml = new PreferencesXML(conf, new File(configDir + File.separator + confRel.toString()));
                                     List<String> keys = new ArrayList<>(), values = new ArrayList<>(); xml.load(keys, values);
+                                    for (int i = values.size() - 1; i >= 0; i--)
+                                        if (values.get(i).startsWith(copyOmegat.toString()))
+                                            values.set(i, values.get(i).replace(copyOmegat.toString(), configDir).replace("//","/"));
                                     keys.add("omegat_vendor"); values.add("cApStAn");
                                     Log.log("Import " + conf + " from standard OmegaT configuration (COPY+CHANGE)");
                                     xml.save(keys, values);
