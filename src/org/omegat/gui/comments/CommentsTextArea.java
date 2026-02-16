@@ -81,7 +81,7 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
         setText(EXPLANATION);
         setMinimumSize(new Dimension(100, 50));
 
-        addCommentProvider(ENTRY_COMMENT_PROVIDER, 0);
+        //addCommentProvider(ENTRY_COMMENT_PROVIDER, 0);
 
         CoreEvents.registerEntryEventListener(this);
 
