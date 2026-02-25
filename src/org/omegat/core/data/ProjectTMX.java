@@ -160,8 +160,16 @@ public class ProjectTMX {
 
     public void exportTMX(ProjectProperties props, File outFile, final boolean forceValidTMX,
             final boolean levelTwo, final boolean useOrphaned) throws Exception {
+        String[] headerProps = null;
+        if (useOrphaned) {  // only in project-save.tmx
+            headerProps = new String[] { "Okapi-Plugin-Version", null };
+            for (org.omegat.core.data.PluginInformation info: org.omegat.filters2.master.PluginUtils.getPluginInformations())
+                if (info.getName() != null) if (info.getName().contains("Okapi")) headerProps[1] = info.getVersion();
+            if (headerProps[1] == null) headerProps = null;
+        }
+            
         TMXWriter2 wr = new TMXWriter2(outFile, props.getSourceLanguage(), props.getTargetLanguage(),
-                props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX);
+                props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX, headerProps);
         try {
             Map<String, TMXEntry> tempDefaults = new TreeMap<>();
             Map<EntryKey, TMXEntry> tempAlternatives = new TreeMap<>();

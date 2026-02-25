@@ -89,11 +89,13 @@ public class TMXWriter2 {
      * @param sentenceSegmentingEnabled
      * @param levelTwo
      *            When true, the tmx is made compatible with level 2 (TMX version 1.4)
-     * @param callback
+     * @param forceValidTMX
+     * @param headerInfo
+     *              When present, properties to be added in the header
      * @throws Exception
      */
     public TMXWriter2(File file, final Language sourceLanguage, final Language targetLanguage,
-            boolean sentenceSegmentingEnabled, boolean levelTwo, boolean forceValidTMX) throws Exception {
+            boolean sentenceSegmentingEnabled, boolean levelTwo, boolean forceValidTMX, String[] headerInfo) throws Exception {
         this.levelTwo = levelTwo;
         this.forceValidTMX = forceValidTMX;
 
@@ -116,7 +118,7 @@ public class TMXWriter2 {
         }
         xml.writeCharacters(lineSeparator);
 
-        writeHeader(sourceLanguage, targetLanguage, sentenceSegmentingEnabled);
+        writeHeader(sourceLanguage, targetLanguage, sentenceSegmentingEnabled, headerInfo);
 
         xml.writeCharacters("  ");
         xml.writeStartElement("body");
@@ -128,7 +130,13 @@ public class TMXWriter2 {
         tmxDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
         tmxDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
+    
 
+    public TMXWriter2(File file, final Language sourceLanguage, final Language targetLanguage,
+            boolean sentenceSegmentingEnabled, boolean levelTwo, boolean forceValidTMX) throws Exception {
+        this(file, sourceLanguage, targetLanguage, sentenceSegmentingEnabled, levelTwo, forceValidTMX, null);
+    }
+    
     public void close() throws Exception {
         try {
             xml.writeCharacters("  ");
@@ -291,9 +299,9 @@ public class TMXWriter2 {
     }
 
     private void writeHeader(final Language sourceLanguage, final Language targetLanguage,
-            boolean sentenceSegmentingEnabled) throws Exception {
+            boolean sentenceSegmentingEnabled, String[] headerInfo) throws Exception {
         xml.writeCharacters("  ");
-        xml.writeEmptyElement("header");
+        xml.writeStartElement("header");
 
         xml.writeAttribute("creationtool", OStrings.getApplicationName());
         xml.writeAttribute("o-tmf", "OmegaT TMX");
@@ -305,6 +313,19 @@ public class TMXWriter2 {
         xml.writeAttribute("segtype", sentenceSegmentingEnabled ? "sentence" : "paragraph");
 
         xml.writeAttribute("srclang", sourceLanguage.toString());
+        
+        if ((headerInfo != null) && (headerInfo.length > 0)) {
+            for (int i = 0; i < headerInfo.length; i += 2) {
+                xml.writeCharacters("\n    ");
+                xml.writeStartElement("prop");
+                xml.writeAttribute("type", headerInfo[i]);
+                xml.writeCharacters(headerInfo[i + 1]);
+                xml.writeEndElement();
+            }
+            xml.writeCharacters("\n  ");
+        }
+        
+        xml.writeEndElement();
 
         xml.writeCharacters(lineSeparator);
     }
