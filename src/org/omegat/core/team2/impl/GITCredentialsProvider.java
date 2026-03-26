@@ -133,7 +133,7 @@ public class GITCredentialsProvider extends CredentialsProvider {
         predefined.put("fingerprint." + url, predefinedFingerprint);
     }
 
-    private Credentials loadCredentials(URIish uri) {
+    private Credentials loadCredentials(URIish uri) throws Exception {
         String url = uri.toString();
         Credentials credentials = new Credentials();
         credentials.username = TeamSettings.get(url + "!" + KEY_USERNAME_SUFFIX);
@@ -175,8 +175,14 @@ public class GITCredentialsProvider extends CredentialsProvider {
         String predefinedFingerprint = predefined.get("fingerprint." + url);
 
         // get saved
-        Credentials credentials = loadCredentials(uri);
-
+        Credentials credentials;
+        try {
+            credentials = loadCredentials(uri);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new UnsupportedCredentialItem(uri, "Cannot decrypt password");
+        }
+    
         boolean ok = false;
         // theoretically, username can be unknown, but in practice it is always set, so not requested.
         for (CredentialItem i : items) {
@@ -356,10 +362,14 @@ public class GITCredentialsProvider extends CredentialsProvider {
             throw new KnownException("TEAM_PREDEFINED_CREDENTIALS_ERROR");
         }
 
-        Credentials credentials = loadCredentials(uri);
-        credentials.username = null;
-        credentials.password = null;
-        saveCredentials(uri, credentials);
+        try {
+            Credentials credentials = loadCredentials(uri);
+            credentials.username = null;
+            credentials.password = null;
+            saveCredentials(uri, credentials);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static String extractFingerprint(String text) {
