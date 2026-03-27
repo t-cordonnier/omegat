@@ -29,6 +29,7 @@ package org.omegat.core.team2.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -134,6 +135,8 @@ public class GITCredentialsProvider extends CredentialsProvider {
     }
 
     private Credentials loadCredentials(URIish uri) {
+        // Always look up by full URL (uri.toString()), which is also what
+        // saveCredentials() writes, so the two are always in sync.
         String url = uri.toString();
         Credentials credentials = new Credentials();
         credentials.username = TeamSettings.get(url + "!" + KEY_USERNAME_SUFFIX);
@@ -142,10 +145,16 @@ public class GITCredentialsProvider extends CredentialsProvider {
     }
 
     private void saveCredentials(URIish uri, Credentials credentials) {
+        // Save under the full URL key so loadCredentials() finds them
+        // immediately on the next call without a second lookup.
+        // username and password are written in a single atomic disk write
+        // via setAll() to avoid a window where only one of the two is on disk.
         String url = uri.toString();
         try {
-            TeamSettings.set(url + "!" + KEY_USERNAME_SUFFIX, credentials.username);
-            TeamSettings.set(url + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(credentials.password));
+            Map<String, String> entries = new LinkedHashMap<>();
+            entries.put(url + "!" + KEY_USERNAME_SUFFIX, credentials.username);
+            entries.put(url + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(credentials.password));
+            TeamSettings.setAll(entries);
         } catch (Exception e) {
             Core.getMainWindow().displayErrorRB(e, "TEAM_ERROR_SAVE_CREDENTIALS", null, "TF_ERROR");
         }
@@ -356,6 +365,8 @@ public class GITCredentialsProvider extends CredentialsProvider {
             throw new KnownException("TEAM_PREDEFINED_CREDENTIALS_ERROR");
         }
 
+        // Clear stored credentials atomically so the next get() call will
+        // prompt the user again with a fresh dialog.
         Credentials credentials = loadCredentials(uri);
         credentials.username = null;
         credentials.password = null;

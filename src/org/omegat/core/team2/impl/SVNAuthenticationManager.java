@@ -25,6 +25,8 @@
 
 package org.omegat.core.team2.impl;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.net.ssl.TrustManager;
@@ -127,8 +129,13 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
 
         String user = userPassDialog.userText.getText();
         String pass = new String(userPassDialog.passwordField.getPassword());
-        TeamSettings.set(repoUrl + "!" + KEY_USERNAME_SUFFIX, user);
-        TeamSettings.set(repoUrl + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(pass));
+
+        // Save username and password in a single atomic write to avoid a
+        // window where only one of the two keys is on disk.
+        Map<String, String> entries = new LinkedHashMap<>();
+        entries.put(repoUrl + "!" + KEY_USERNAME_SUFFIX, user);
+        entries.put(repoUrl + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(pass));
+        TeamSettings.setAll(entries);
 
         if (ISVNAuthenticationManager.PASSWORD.equals(kind)) {
             return SVNPasswordAuthentication.newInstance(user, pass.toCharArray(), false, url, false);
