@@ -55,7 +55,7 @@ public final class TeamSettings {
         // Use the magic header to reliably distinguish encrypted from plain-text.
         if (TeamSettingsEncryptor.isEncrypted(fileBytes)) {
             try {
-                byte[] decrypted = TeamSettingsEncryptor.decrypt(fileBytes);
+                byte[] decrypted = TeamSettingsEncryptor.GLOBAL_ENCRYPTOR.decrypt(fileBytes);
                 cachedProperties.load(new ByteArrayInputStream(decrypted));
                 Log.log("TeamSettings: loaded " + cachedProperties.size()
                         + " keys from encrypted file.");
@@ -92,7 +92,7 @@ public final class TeamSettings {
         Log.log("TeamSettings: persisting " + cachedProperties.size()
                 + " keys, plaintext size = " + plainBytes.length + " bytes.");
 
-        byte[] encrypted = TeamSettingsEncryptor.encrypt(plainBytes);
+        byte[] encrypted = TeamSettingsEncryptor.GLOBAL_ENCRYPTOR.encrypt(plainBytes);
 
         // Write to temp file, then atomically rename to avoid partial reads.
         try (FileOutputStream out = new FileOutputStream(fNew)) {

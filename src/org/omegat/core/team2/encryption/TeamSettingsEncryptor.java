@@ -45,13 +45,18 @@ public final class TeamSettingsEncryptor {
     // Java properties file.
     private static final byte[] MAGIC = { (byte) 0xC5, (byte) 0x75, (byte) 0xE5, (byte) 0x01 };
 
-    private TeamSettingsEncryptor() {
+    /** This is the encryptor used for global repositories.properties **/
+    public static final TeamSettingsEncryptor GLOBAL_ENCRYPTOR = new TeamSettingsEncryptor(MachineIdGenerator.getMachineId());
+    
+    private String key;
+    
+    public TeamSettingsEncryptor(String key) {
+        this.key = key;
     }
-
-    private static SecretKeySpec deriveKey() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String machineId = MachineIdGenerator.getMachineId();
+        
+    private SecretKeySpec deriveKey() throws NoSuchAlgorithmException, UnsupportedEncodingException {   
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] keyBytes = sha.digest(machineId.getBytes("UTF-8"));
+        byte[] keyBytes = sha.digest(key.getBytes("UTF-8"));
         return new SecretKeySpec(keyBytes, "AES");
     }
 
@@ -82,7 +87,7 @@ public final class TeamSettingsEncryptor {
      * @param plainText the plain-text content to encrypt
      * @return magic + IV + ciphertext as a single byte array
      */
-    public static byte[] encrypt(byte[] plainText)  throws NoSuchAlgorithmException, UnsupportedEncodingException, 
+    public byte[] encrypt(byte[] plainText)  throws NoSuchAlgorithmException, UnsupportedEncodingException, 
         NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException {
         byte[] iv = new byte[IV_LENGTH];
         new SecureRandom().nextBytes(iv);
@@ -108,7 +113,7 @@ public final class TeamSettingsEncryptor {
      * @param encryptedData magic + IV + ciphertext
      * @return original plain-text bytes
      */
-    public static byte[] decrypt(byte[] encryptedData) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+    public byte[] decrypt(byte[] encryptedData) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
         InvalidAlgorithmParameterException, UnsupportedEncodingException, BadPaddingException {
         if (!isEncrypted(encryptedData)) {
             throw new IllegalArgumentException(

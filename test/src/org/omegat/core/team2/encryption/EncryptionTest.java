@@ -37,11 +37,25 @@ public class EncryptionTest {
     public void testEncodeDecode() throws Exception {
         String test = "this is a test";
         assertFalse(TeamSettingsEncryptor.isEncrypted(test.getBytes("UTF-8")));
-        byte[] crypt = TeamSettingsEncryptor.encrypt(test.getBytes("UTF-8"));
+        
+        byte[] crypt = TeamSettingsEncryptor.GLOBAL_ENCRYPTOR.encrypt(test.getBytes("UTF-8"));
         System.out.println("Encrypted: " + new String(crypt, "UTF-8"));
         assertTrue(TeamSettingsEncryptor.isEncrypted(crypt));
-        crypt = TeamSettingsEncryptor.decrypt(crypt);
+        crypt = TeamSettingsEncryptor.GLOBAL_ENCRYPTOR.decrypt(crypt);
         assertEquals(new String(crypt, "UTF-8"), "this is a test");
+        
+        // Try with other encryptor 
+        TeamSettingsEncryptor otherEncryptor = new TeamSettingsEncryptor("Test-Key");
+        crypt = otherEncryptor.encrypt(test.getBytes("UTF-8"));
+        assertTrue(TeamSettingsEncryptor.isEncrypted(crypt));
+        assertEquals("this is a test", new String(otherEncryptor.decrypt(crypt), "UTF-8"));
+        // Show that we must use same encryptor for encryption and un-encryption
+        try {
+            assertFalse("this is a test".equals(
+                new String(TeamSettingsEncryptor.GLOBAL_ENCRYPTOR.decrypt(crypt), "UTF-8")));
+        } catch (Exception e) {
+            System.out.println("Not even possible to decrypt with default encryptor : all good");
+        }        
     }
     
     @Test
