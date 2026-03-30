@@ -2,10 +2,17 @@ package org.omegat.core.team2.encryption;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.security.NoSuchAlgorithmException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.util.Arrays;
 import java.util.logging.Logger;
+import java.io.UnsupportedEncodingException;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -41,7 +48,7 @@ public final class TeamSettingsEncryptor {
     private TeamSettingsEncryptor() {
     }
 
-    private static SecretKeySpec deriveKey() throws Exception {
+    private static SecretKeySpec deriveKey() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String machineId = MachineIdGenerator.getMachineId();
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
         byte[] keyBytes = sha.digest(machineId.getBytes("UTF-8"));
@@ -75,7 +82,8 @@ public final class TeamSettingsEncryptor {
      * @param plainText the plain-text content to encrypt
      * @return magic + IV + ciphertext as a single byte array
      */
-    public static byte[] encrypt(byte[] plainText) throws Exception {
+    public static byte[] encrypt(byte[] plainText)  throws NoSuchAlgorithmException, UnsupportedEncodingException, 
+        NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException {
         byte[] iv = new byte[IV_LENGTH];
         new SecureRandom().nextBytes(iv);
 
@@ -100,7 +108,8 @@ public final class TeamSettingsEncryptor {
      * @param encryptedData magic + IV + ciphertext
      * @return original plain-text bytes
      */
-    public static byte[] decrypt(byte[] encryptedData) throws Exception {
+    public static byte[] decrypt(byte[] encryptedData) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException,
+        InvalidAlgorithmParameterException, UnsupportedEncodingException, BadPaddingException {
         if (!isEncrypted(encryptedData)) {
             throw new IllegalArgumentException(
                     "Missing magic header - file is not encrypted by TeamSettingsEncryptor");
