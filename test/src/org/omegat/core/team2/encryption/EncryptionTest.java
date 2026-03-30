@@ -44,5 +44,12 @@ public class EncryptionTest {
         assertEquals(new String(crypt, "UTF-8"), "this is a test");
     }
     
+    @Test
+    public void testMachineId() {
+        String machineId = MachineIdGenerator.getMachineIdNoCache();
+        // Assert that calling twice this method gives same result
+        assertEquals(machineId, MachineIdGenerator.getMachineIdNoCache());
+    }
+    
 	
 }

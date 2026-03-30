@@ -37,7 +37,11 @@ public final class MachineIdGenerator {
         if (cachedMachineId != null) {
             return cachedMachineId;
         }
-
+        return getMachineIdNoCache();
+    }
+    
+    
+    static synchronized String getMachineIdNoCache() {
         // Collect all candidate values upfront before any branching
         // to avoid partial-init issues with OSHI
         String osFamily        = "";
