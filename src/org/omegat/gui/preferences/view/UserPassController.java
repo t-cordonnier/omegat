@@ -38,6 +38,7 @@ import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.TrimmerListener;
 
 /**
  * @author Didier Briel
@@ -64,6 +65,8 @@ public class UserPassController extends BasePreferencesController {
 
     private void initGui() {
         panel = new UserPassPanel();
+        panel.userText.getDocument().addDocumentListener(new TrimmerListener());
+        panel.passwordField.getDocument().addDocumentListener(new TrimmerListener());
     }
 
     @Override
