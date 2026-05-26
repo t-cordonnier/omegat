@@ -29,10 +29,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+
+import org.omegat.core.team2.impl.TeamUtils;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.Log;
 
 /**
  * Class for read/save repository-specific settings in the ~/.omegat/ directory.
@@ -51,6 +55,39 @@ public final class TeamSettings {
             configFile = new File(StaticUtils.getConfigDir(), "repositories.properties");
         }
         return configFile;
+    }
+    
+    // Should be called at first load of the class
+    static {
+        synchronized (TeamSettings.class) {
+            // Try to encrypt all passwords
+            try {
+                Properties props = new Properties(); File fOri = getConfigFile();
+                if (fOri.exists()) {
+                    try (FileInputStream in = new FileInputStream(fOri)) {
+                        props.load(in);
+                    }
+                    int change = 0;
+                    for(Map.Entry<Object, Object> e : props.entrySet()) 
+                        if (e.getKey().toString().endsWith("!password"))
+                            if (! e.getValue().toString().startsWith("***")) {
+                                props.put(e.getKey().toString(), TeamUtils.encodePassword(e.getValue().toString()));
+                                change++;
+                            }
+                    if (change > 0) {
+                        File fNew = new File(getConfigFile().getAbsolutePath() + ".new");
+                        try (FileOutputStream out = new FileOutputStream(fNew)) {            
+                            props.store(out, null);
+                        }
+                        fOri.delete(); FileUtils.moveFile(fNew, fOri);
+                        Log.log("TeamSettings: " + change + " passwords reencrypted");
+                    }
+                    else Log.log("TeamSettings: no password requires re-encryption");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public static synchronized Set<Object> listKeys() {
