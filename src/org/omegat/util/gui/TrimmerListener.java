@@ -28,6 +28,8 @@ package org.omegat.util.gui;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.DocumentEvent;
 
+import java.util.regex.Pattern;
+
 /**
  * Document listener which trims text inserted via Copy/Paste
  * @author Thomas CORDONNIER
@@ -37,12 +39,14 @@ public class TrimmerListener implements DocumentListener {
     public void changedUpdate(DocumentEvent e) {}
     public void removeUpdate(DocumentEvent e) {}
     
+    Pattern START_SPACE = Pattern.compile("\\A\\s"), END_SPACE = Pattern.compile ("\\s\\z");
+    
     public void insertUpdate(DocumentEvent e) {
         javax.swing.SwingUtilities.invokeLater(() -> {
             try {
                 javax.swing.text.Document doc = e.getDocument();
-                while (doc.getText(0,1).startsWith(" ")) doc.remove(0,1);
-                while (doc.getText(doc.getLength() - 1, 1).endsWith(" ")) doc.remove(doc.getLength() - 1, 1);
+                while (START_SPACE.matcher(doc.getText(0,1)).matches()) doc.remove(0,1);
+                while (END_SPACE.matcher(doc.getText(doc.getLength() - 1, 1)).matches()) doc.remove(doc.getLength() - 1, 1);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
