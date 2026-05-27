@@ -42,6 +42,7 @@ import org.omegat.util.StringUtil;
 import org.omegat.util.HttpConnectionUtils;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.TrimmerListener;
 
 /**
  *
@@ -75,6 +76,7 @@ public class NewTeamProject extends javax.swing.JDialog {
                 clearRepo();
             }
         });
+        txtRepositoryOrProjectFileURL.getDocument().addDocumentListener(new TrimmerListener());
         txtRepositoryOrProjectFileURL.addActionListener(e -> btnOk.doClick());
         txtDirectory.getDocument().addDocumentListener(new DocumentListener() {
             @Override

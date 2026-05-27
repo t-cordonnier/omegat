@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.TrimmerListener;
 
 /**
  *
@@ -52,6 +53,8 @@ public class GITUserPassDialog extends javax.swing.JDialog {
         StaticUIUtils.setEscapeClosable(this);
 
         initComponents();
+        userText.getDocument().addDocumentListener(new TrimmerListener());
+        passwordField.getDocument().addDocumentListener(new TrimmerListener());
 
         getRootPane().setDefaultButton(okButton);
 
