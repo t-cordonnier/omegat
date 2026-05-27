@@ -31,10 +31,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+import java.awt.Component;
+import java.awt.Container;
 
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.OmegaTFileChooser;
+import org.omegat.util.gui.TrimmerListener;
 
 /**
  * A chooser for project's directory for a newly created project.
@@ -49,6 +54,7 @@ public class NewProjectFileChooser extends OmegaTFileChooser {
         setFileHidingEnabled(true);
         setFileSelectionMode(DIRECTORIES_ONLY);
         setDialogTitle(OStrings.getString("PP_SAVE_PROJECT_FILE"));
+        addTrimListener(this);
 
         String curDir = Preferences.getPreference(Preferences.CURRENT_FOLDER);
         if (curDir != null) {
@@ -85,5 +91,16 @@ public class NewProjectFileChooser extends OmegaTFileChooser {
         }
         // this is OK - continue
         super.approveSelection();
+    }
+    
+    private static boolean addTrimListener(Container container) {
+        for (Component comp : container.getComponents()) 
+            if (comp instanceof JTextField) {
+                ((JTextField) comp).getDocument().addDocumentListener(new TrimmerListener()); return true;
+            }
+            else if (comp instanceof Container) {
+                if (addTrimListener((Container) comp)) return true;
+            }
+        return false;
     }
 }
