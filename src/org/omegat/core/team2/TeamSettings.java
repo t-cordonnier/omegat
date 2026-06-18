@@ -71,7 +71,7 @@ public final class TeamSettings {
                     for(Map.Entry<Object, Object> e : props.entrySet()) 
                         if (e.getKey().toString().endsWith("!password"))
                             if (! e.getValue().toString().startsWith("***")) {
-                                props.put(e.getKey().toString(), TeamUtils.encodePassword(e.getValue().toString()));
+                                props.put(e.getKey().toString(), TeamUtils.encodePassword(TeamUtils.decodePassword(e.getValue().toString())));
                                 change++;
                             }
                     if (change > 0) {
