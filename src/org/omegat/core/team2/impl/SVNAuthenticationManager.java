@@ -128,7 +128,7 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
         String user = userPassDialog.userText.getText();
         String pass = new String(userPassDialog.passwordField.getPassword());
         TeamSettings.set(repoUrl + "!" + KEY_USERNAME_SUFFIX, user);
-        TeamSettings.set(repoUrl + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(pass));
+        TeamSettings.set(repoUrl + "!" + KEY_PASSWORD_SUFFIX, pass);    // encryption to be managed by TeamSettings!!!
 
         if (ISVNAuthenticationManager.PASSWORD.equals(kind)) {
             return SVNPasswordAuthentication.newInstance(user, pass.toCharArray(), false, url, false);
@@ -163,7 +163,7 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
         }
         String user = TeamSettings.get(repoUrl + "!" + KEY_USERNAME_SUFFIX); String pass;
         try {
-            pass = TeamUtils.decodePassword(TeamSettings.get(repoUrl + "!" + KEY_PASSWORD_SUFFIX));
+            pass = TeamSettings.get(repoUrl + "!" + KEY_PASSWORD_SUFFIX);   // always returns clear value, even if encrypted!
         } catch (Exception ex) {
             throw new KnownException("TEAM_PREDEFINED_CREDENTIALS_ERROR");
         }

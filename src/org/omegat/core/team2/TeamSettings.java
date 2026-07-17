@@ -39,7 +39,9 @@ import org.omegat.util.StaticUtils;
 import org.omegat.util.Log;
 
 /**
- * Class for read/save repository-specific settings in the ~/.omegat/ directory.
+ * Class for read/save repository-specific settings in the ~/.omegat/ directory. <br/>
+ * Warning: this class manages calls to encryption methods from TeamUtils, deciding when it is necessary <br/>
+ * Do not encode/decode values before calling TeamSettings.get nor TeamSettings.set!!!
  *
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
@@ -57,6 +59,14 @@ public final class TeamSettings {
         return configFile;
     }
     
+    /** 
+     * Whenever the value should be stored as encrypted or not
+     * Private, because that should remain transparent to users
+     **/
+    private static boolean needsEncryption(String key) {
+        return key.endsWith("!password");
+    }
+    
     // Should be called at first load of the class
     static {
         synchronized (TeamSettings.class) {
@@ -69,7 +79,7 @@ public final class TeamSettings {
                     }
                     int change = 0;
                     for(Map.Entry<Object, Object> e : props.entrySet()) 
-                        if (e.getKey().toString().endsWith("!password"))
+                        if (needsEncryption(e.getKey().toString()))
                             if (! e.getValue().toString().startsWith("***")) {
                                 props.put(e.getKey().toString(), TeamUtils.encodePassword(TeamUtils.decodePassword(e.getValue().toString())));
                                 change++;
@@ -108,7 +118,7 @@ public final class TeamSettings {
     }
 
     /**
-     * Get setting.
+     * Get setting directly readable by caller - decrypted if necessary
      */
     public static synchronized String get(String key) {
         try {
@@ -121,14 +131,15 @@ public final class TeamSettings {
                     in.close();
                 }
             }
-            return p.getProperty(key);
+            if (needsEncryption(key)) return TeamUtils.decodePassword(p.getProperty(key));
+            else return p.getProperty(key);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
     /**
-     * Update setting.
+     * Update setting. Encrypts it if necessary  - do not use set(key, encode(value))!!!
      */
     public static synchronized void set(String key, String newValue) {
         try {
@@ -146,6 +157,7 @@ public final class TeamSettings {
                 f.getParentFile().mkdirs();
             }
             if (newValue != null) {
+                if (needsEncryption(key)) newValue = TeamUtils.encodePassword(newValue);
                 p.setProperty(key, newValue);
             } else {
                 p.remove(key);

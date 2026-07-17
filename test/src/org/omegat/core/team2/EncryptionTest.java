@@ -36,7 +36,7 @@ public class EncryptionTest {
     public void testEncodeDecode() throws Exception {
         String test = "this is a test";
         test = TeamUtils.encodePassword(test);
-        System.out.println("Encrypted: " + test);
+        assertEquals(test.substring(0, 3), "***");
         test = TeamUtils.decodePassword(test);
         assertEquals(test, "this is a test");
     }
@@ -44,7 +44,7 @@ public class EncryptionTest {
     @Test
 	public void testRetroCompatible() throws Exception {
         // Pure Base 64, without AES 
-        String test = "dGhpcyBpcyBhIHRlc3QK";
+        String test = "dGhpcyBpcyBhIHRlc3Q=";
         assertEquals(TeamUtils.decodePassword(test), "this is a test");        
 	}
 	

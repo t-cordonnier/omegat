@@ -137,7 +137,7 @@ public class GITCredentialsProvider extends CredentialsProvider {
         String url = uri.toString();
         Credentials credentials = new Credentials();
         credentials.username = TeamSettings.get(url + "!" + KEY_USERNAME_SUFFIX);
-        credentials.password = TeamUtils.decodePassword(TeamSettings.get(url + "!" + KEY_PASSWORD_SUFFIX));
+        credentials.password = TeamSettings.get(url + "!" + KEY_PASSWORD_SUFFIX);
         return credentials;
     }
 
@@ -145,7 +145,7 @@ public class GITCredentialsProvider extends CredentialsProvider {
         String url = uri.toString();
         try {
             TeamSettings.set(url + "!" + KEY_USERNAME_SUFFIX, credentials.username);
-            TeamSettings.set(url + "!" + KEY_PASSWORD_SUFFIX, TeamUtils.encodePassword(credentials.password));
+            TeamSettings.set(url + "!" + KEY_PASSWORD_SUFFIX, credentials.password);
         } catch (Exception e) {
             Core.getMainWindow().displayErrorRB(e, "TEAM_ERROR_SAVE_CREDENTIALS", null, "TF_ERROR");
         }
