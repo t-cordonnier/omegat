@@ -93,6 +93,7 @@ public class NewTeamProject extends javax.swing.JDialog {
             }
         });
         txtDirectory.addActionListener(e -> btnOk.doClick());
+        txtDirectory.getDocument().addDocumentListener(new TrimmerListener());     
 
         StaticUIUtils.setEscapeClosable(this);
         getRootPane().setDefaultButton(btnOk);
